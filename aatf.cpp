@@ -19,19 +19,19 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 	msgOut+=_T("\r\n");
 
 	//Settings
-	int manletBonus = 5;
-	int goldGiantPen = 6;
-	int silverGiantPen = 3;
+	int manletBonus = 0;
+	int goldGiantPen = 0;
+	int silverGiantPen = 0;
 
 	int goldRate = 99;
 	int silverRate = 88;
 	int reqNumGold = 2;
-	int reqNumSilver = 2;
+	int reqNumSilver = 3;
 
-	int greenGiant = 6;
-	int greenTall = 5;
-	int greenMid = 6;
-	int greenManlet = 6;
+	int greenGiant = 0;
+	int greenTall = 0;
+    int greenMid = 0;
+	int greenManlet = 0;
 
 	int redGiant = 0;
 	int redTall = 10;
@@ -48,7 +48,39 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     int numTall = 0;
     int numMid = 0;
     int numManlet = 0;
-    bool usingRed = false;
+    bool usingRed = true; //force red for vgl
+
+    int goldA = 2;
+    int silverA = 2;
+    int regA = 2;
+    int manletA = 3;
+
+    bool isManlet = false;
+
+    //Settings
+     manletBonus = 0;
+     goldRate = 99;
+     silverRate = 88;
+     greenGiant = 0;
+     greenTall = 0;
+     greenMid = 0;
+     greenManlet = 0;
+     redGiant = 0;
+     redTall = 10;
+     redMid = 7;
+     redManlet = 6;
+
+     numGK = 0;
+    //Player ratings
+     numReg = 0;
+     numSilver = 0;
+     numGold = 0;
+    //Height brackets
+     numGiant = 0;
+     numTall = 0;
+     numMid = 0;
+     numManlet = 0;
+    int numTrickOrCom = 0;
     
     int errorTot = 0;
 	for(int ii=0; ii<gteams[teamSel].num_on_team; ii++)
@@ -97,10 +129,10 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         rating = max(player.speed, rating);
 		if(pesVersion>19) rating = max(player.aggres, rating);
 		
-		if(player.injury+1 > 3)
+		if(player.injury+1 > 2)
 		{
 			errorTot++;
-            errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", cannot exceed 3; ");
+            errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", cannot exceed 2; ");
 		}
 
 		//Check if registered pos has playable set to A
@@ -182,7 +214,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				countA++;
         }
 
-        //If more than 1 A, 1 card less for each
+        //If more than 1 A, 1 card less for each (Not for VGL)
         if(countA > 1)
         {
             if(player.play_pos[12] == 2) //Can't have GK as second A
@@ -190,7 +222,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot++;
 				errorMsg << _T("Has GK as second A position; ");
 			}
-            cardMod -= (countA - 1);
+            //cardMod -= (countA - 1);
         }
 
 		//Count cards
@@ -206,16 +238,25 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 cardCount++;
                 //Captain gets free captaincy card
-				if(jj==25 && player.id == gteams[teamSel].players[gteams[teamSel].captain_ind])
+                if (jj == 25 && player.id == gteams[teamSel].players[gteams[teamSel].captain_ind]) {
                     cardMod++;
+                }
+                    
                 //Trick cards may be free, count number
-                if(jj<6 || jj==16 || jj==28 || jj==29 || jj==30 || jj==34)
+                //if(jj<6 || jj==16 || jj==28 || jj==29 || jj==30 || jj==34)
+                if (jj < 6 || jj == 16 || jj == 21 || jj == 28 || jj == 29 || jj == 30 || jj == 34) //<- this is for PES19
 				{
                     hasTrick = true;
 					numTrick++;
 				}
             }
         }
+
+        //Captain gets a free regular card
+        if (player.id == gteams[teamSel].players[gteams[teamSel].captain_ind]) {
+            cardMod++;
+        }
+
 		for(int jj=0;jj<7;jj++)
         {
             if(player.com_style[jj])
@@ -225,8 +266,10 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			}
 		}
 
+        isManlet = false;
 		if(player.height <= 175)
 		{
+            isManlet = true;
             numManlet++;
 			cardMod++; //Manlets get a bonus card
 		}
@@ -286,11 +329,23 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot++;
 				errorMsg << _T("Form is ") << player.form+1 << _T(", should be 4; ");
 			}
+
+            if (isManlet) {
+                if (countA > manletA) {
+                    cardMod -= (countA - manletA); //For VGL: trade A pos for a card
+                }
+            }
+            else {
+                if (countA > regA) {
+                    cardMod -= (countA - regA); //For VGL: trade A pos for a card
+                }
+            }
 			
             if(player.reg_pos == 0) //GK gets 2 cards
             {
-				cardMod += min(0, numTrick); //0 free tricks
-				cardLimit = 2 + cardMod;
+				cardMod += min(99, numTrick); //99 free tricks
+                //cardMod += min(1, numCom); //1 free COM
+				cardLimit = 3 + cardMod;
                 if(cardCount > cardLimit)
 				{
                     errorTot++;
@@ -304,8 +359,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             }
             else
 			{
-				cardMod += min(2, numTrick); //2 free tricks
-				cardLimit = 4 + cardMod;
+				cardMod += min(99, numTrick); //2 free tricks
+                //cardMod += min(1, numCom); //1 free COM
+				cardLimit = 3 + cardMod;
 				if(cardCount > cardLimit)
 				{
 					errorTot++;
@@ -327,7 +383,6 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					errorMsg << _T("Illegal Ability scores; ");
 				}
             }
-
 			if(player.injury+1 > 1)
 			{
 				errorTot++;
@@ -361,9 +416,19 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				targetRate -= silverGiantPen;
 				targetRate2 -= silverGiantPen;
 			}
-            cardMod += min(3, numTrick); //3 free tricks
+            if (isManlet) {
+                if (countA > manletA) {
+                    cardMod -= (countA - manletA); //For VGL: trade A pos for a card
+                }
+            }
+            else {
+                if (countA > silverA) {
+                    cardMod -= (countA - regA); //For VGL: trade A pos for a card
+                }
+            }
+            cardMod += min(99, numTrick); //99 free tricks
 			cardMod += min(1, numCom); //1 free COM
-			cardLimit = 5 + cardMod;
+			cardLimit = 4 + cardMod;
             if(cardCount > cardLimit)
 			{
                 errorTot++;
@@ -374,10 +439,10 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot++;
 				errorMsg << _T("Illegal Ability scores; ");
 			}
-			if(player.injury+1 > 3)
+			if(player.injury+1 > 2)
 			{
 				errorTot++;
-				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be 3; ");
+				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be 2; ");
 			}
         }
 		/* GOLD */
@@ -407,10 +472,22 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				targetRate -= goldGiantPen;
 				targetRate2 -= goldGiantPen;
 			}
-            cardMod += min(3, numTrick); //3 free tricks
-			cardMod += min(2, numCom); //2 free COMs
 
-			cardLimit = 6 + cardMod;
+            if (isManlet) {
+                if (countA > manletA) {
+                    cardMod -= (countA - manletA); //For VGL: trade A pos for a card
+                }
+            }
+            else {
+                if (countA > regA) {
+                    cardMod -= (countA - goldA); //For VGL: trade A pos for a card
+                }
+            }
+
+            cardMod += min(99, numTrick); //3 free tricks
+			cardMod += min(1, numCom); //1 free COMs
+
+			cardLimit = 5 + cardMod;
             if(cardCount > cardLimit)
 			{
                 errorTot++;
@@ -422,19 +499,19 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorMsg << _T("Illegal Ability scores; ");
 			}
 
-			if(player.injury+1 > 3)
+			if(player.injury+1 > 2)
 			{
 				errorTot++;
-				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be 3; ");
+				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be 2; ");
 			}
 		}
 
 		//Check PES skill card limit of 10
-		if(cardCount-numCom > 10)
-		{
-            errorTot++;
-			errorMsg << _T("Has ") << cardCount-numCom << _T(" skill cards, PES limit is 10, please swap to COM cards or trade for additional A positions; ");
-		}
+		//if(cardCount-numCom > 10)
+		//{
+        //    errorTot++;
+		//	errorMsg << _T("Has ") << cardCount-numCom << _T(" skill cards, PES limit is 10, please swap to COM cards or trade for additional A positions; ");
+		//}
 
 		if(player.drib != targetRate)
         {
@@ -700,7 +777,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 	SetWindowText(GetDlgItem(hAatfbox, IDT_AATFOUT), msgOut.c_str());
 	if(errorTot)
-		SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("It's all so tiresome."));
+		//SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("It's all so tiresome."));
+        SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM)_T("It's all fucked."));
 	else
-		SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("You have received one (1) Official R-word Pass."));
+		//SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("You have received one (1) Official R-word Pass."));
+        SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM)_T("Perfect, blaze."));
 }

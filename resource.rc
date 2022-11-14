@@ -18,7 +18,7 @@ IDI_4CC_MED	ICON "4cc_med.ico"
 IDI_4CC		ICON "4cc_sm.ico"
 
 //Bitmaps
-IDB_4CCLOGO    BITMAP  DISCARDABLE     "4cc_logo.bmp"
+IDB_4CCLOGO    BITMAP  DISCARDABLE     "vgl_logo.bmp"
 
 //Menu
 IDR_MAINMENU MENU DISCARDABLE 
