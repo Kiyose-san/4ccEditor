@@ -38,12 +38,12 @@ void setup_main(HWND H)
 		270, 470, 20, 33, H, (HMENU)IDB_MOVE_PLYR, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Gold Medal"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Gold Medal and Add Name Color"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
 		20, 520, 250, 26, H, (HMENU)IDB_MAKE_GOLD, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Silver Medal"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Silver Medal and Add Name Color"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
 		20, 552, 250, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
