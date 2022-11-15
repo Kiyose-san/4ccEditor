@@ -581,208 +581,208 @@ void setup_tab1(HWND H)
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Scissors Feint"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SCIS, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SCIS, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Flip Flap"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FLIP, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1+ydiff*1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FLIP, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Marseille Turn"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*2, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MARS, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1+ydiff*2, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MARS, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Sombrero"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*3, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SOMB, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1+ydiff*3, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SOMB, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Cut Behind && Turn"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*4, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CUTB, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1+ydiff*4, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CUTB, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Scotch Move"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*5, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SCOT, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1+ydiff*5, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SCOT, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Heading"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*6, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HEAD, GetModuleHandle(NULL), NULL);	
+		x1, y1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HEAD, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Long Range Drive"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*7, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LRDR, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LRDR, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Knuckle Shot"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*8, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_KNUC, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*2, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_KNUC, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Acrobatic Finishing"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*9, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ACRF, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*3, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ACRF, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Heel Trick"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*10, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HEEL, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*4, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HEEL, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("First-time Shot"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*11, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FIRS, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*5, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FIRS, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("One-touch Pass"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*12, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ONET, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*6, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ONET, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Weighted Pass"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*13, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_WEIG, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*7, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_WEIG, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Pinpoint Crossing"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*14, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_PINP, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*8, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_PINP, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Outside Curler"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*15, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_OUTS, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*9, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_OUTS, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Rabona"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*16, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_RABO, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1 + ydiff * 6, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_RABO, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Low Lofted Pass"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*17, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LLPA, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*10, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LLPA, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Low Punt Trajectory"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*18, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LPTR, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*11, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LPTR, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Long Throw"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*19, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LTHR, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*12, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LTHR, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("GK Long Throw"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*20, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_GKLT, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*13, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_GKLT, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Malicia"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*21, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MALI, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1 + ydiff * 7, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MALI, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Man Marking"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*22, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MANM, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*14, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MANM, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Track Back"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*23, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_TRAC, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*15, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_TRAC, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Acrobatic Clear"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*24, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ACRC, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*16, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_ACRC, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Captaincy"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*25, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CAPT, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*17, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CAPT, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Super-sub"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*26, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SUPR, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*18, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_SUPR, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Fighting Spirit"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1, y1+ydiff*27, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FIGH, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*19, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_FIGH, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	//New for 19
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Double Touch"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_DOUB, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1 + ydiff * 8, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_DOUB, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Crossover Turn"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*1, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CROS, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1 + ydiff * 9, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CROS, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Step on Skill"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*2, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_STEP, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1 + ydiff * 10, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_STEP, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Chip Shot"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*3, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CHIP, GetModuleHandle(NULL), NULL);	
+		x1, y1 + ydiff * 20, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_CHIP, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Dipping Shots"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*4, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_DIPP, GetModuleHandle(NULL), NULL);	
+		x1, y1 + ydiff * 21, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_DIPP, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Rising Shots"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*5, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_RISI, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*22, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_RISI, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("No Look Pass"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*6, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_NOLO, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1 + ydiff * 11, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_NOLO, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("High Punt Trajectory"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*7, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HIGH, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*23, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_HIGH, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Penalty Specialist"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*8, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_PENA, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*24, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_PENA, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("GK Penalty Specialist"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*9, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_GKPE, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*25, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_GKPE, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Interception"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*10, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_INTE, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*26, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_INTE, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 	//New for 20+
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Long Range Shooting"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*11, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LRSH, GetModuleHandle(NULL), NULL);	
+		x1, y1+ydiff*27, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_LRSH, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Through Passing"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		x1+144, y1+ydiff*12, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_THPA, GetModuleHandle(NULL), NULL);	
+		x1 + 144, y1+ydiff*14, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_THPA, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Ability"), 
