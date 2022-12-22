@@ -160,12 +160,6 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         rating = max(player.speed, rating);
 		if(pesVersion>19) rating = max(player.aggres, rating);
 		
-		if(player.injury+1 > 2)
-		{
-			errorTot++;
-            errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", cannot exceed 2; ");
-		}
-
 		//Check if registered pos has playable set to A
         if(player.reg_pos == 12 && player.play_pos[0] != 2)
 		{
