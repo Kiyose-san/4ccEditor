@@ -114,6 +114,10 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     int numTrickOrCom = 0;
     
     int errorTot = 0;
+    int suggestionTot = 0;
+
+    bool captainHasCard = false;
+    
 	for(int ii=0; ii<gteams[teamSel].num_on_team; ii++)
 	{
 		//Find each player on team
@@ -131,6 +135,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		msgOut+=_T("\r\n");
 
 		tstringstream errorMsg;
+        tstringstream suggestionMsg;
 
 		int cardCount = 0;
         int cardMod = 0;
@@ -264,6 +269,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 cardCount++;
                 //Captain gets free captaincy card
                 if (jj == 25 && player.id == gteams[teamSel].players[gteams[teamSel].captain_ind]) {
+                    captainHasCard = true;
                     cardMod++;
                 }
                     
@@ -279,7 +285,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
         //Captain gets a free regular card
         if (player.id == gteams[teamSel].players[gteams[teamSel].captain_ind]) {
-            cardMod++;
+            cardMod++;            
         }
 
 		for(int jj=0;jj<7;jj++)
@@ -348,6 +354,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					errorTot++;
 					errorMsg << _T("Weak foot accuracy > 2; ");
 				}
+
+                if (player.weak_use+1 < 2)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Weak foot usage < 2]; ");
+                }
+                if (player.weak_acc+1 < 2)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Weak foot accuracy < 2]; ");
+                }
 			}
 
             if(player.form+1 != regForm)
@@ -700,10 +717,18 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			msgOut+=_T("\t");
 			msgOut+=errorMsg.str();
 		}
+
+        if (suggestionMsg.rdbuf()->in_avail())
+        {
+            suggestionMsg << _T("\r\n");
+            msgOut += _T("\t");
+            msgOut += suggestionMsg.str();
+        }
 	}
 	//Team level errors
 	int diff;
-	tstringstream errorMsg;
+    tstringstream errorMsg;
+	tstringstream suggestionMsg;
     //Check heights
     if(!usingRed) //Using Green height system
     {
@@ -828,8 +853,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     }
 	if(errorMsg.rdbuf()->in_avail())
 		errorMsg << _T("\r\n");
-	errorMsg << _T("\r\nErrors: ") << errorTot << _T("\r\n");
+	errorMsg << _T("\r\nErrors: ") << errorTot << _T("\r\n\r\n");
 	msgOut+=errorMsg.str();
+
+    if (!captainHasCard) {
+        suggestionTot++;        
+        suggestionMsg << _T("[Captain does not have free captain card]; ");
+    }
+    if (suggestionMsg.rdbuf()->in_avail())
+        suggestionMsg << _T("\r\n");
+    suggestionMsg << _T("\r\Suggestions: ") << suggestionTot << _T("\r\n");
+    msgOut += suggestionMsg.str();
 
 	SetWindowText(GetDlgItem(hAatfbox, IDT_AATFOUT), msgOut.c_str());
 	if(errorTot)
