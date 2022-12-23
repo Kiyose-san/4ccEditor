@@ -4801,7 +4801,7 @@ void import_squad(HWND hwnd)
 						gplayers[ii].PlayerImport(pIn, gb_importStats, gb_importAes);
 						//No Custom skin in 18
 						if(gb_importAes && giPesVersion>=18 && gplayers[ii].skin_col==7) gplayers[ii].skin_col=0;
-						//Convert between 19 and 18- play style nunmbers if needed
+						//Convert between 19 and 18- play style numbers if needed
 						if(gb_importStats)
 						{
 							if(giPesVersion>=19 && pesVer<19)
