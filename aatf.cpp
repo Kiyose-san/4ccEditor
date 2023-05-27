@@ -469,7 +469,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				}
             }
 
-			if(player.injury+1 > regIR)
+			if(player.injury+1 != regIR)
 			{
 				errorTot++;
 				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be ") << regIR << _T("; ");
@@ -538,7 +538,13 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             }
             else {
                 if (countA > silverA) {
-                    cardMod -= (countA - regA); //For VGL: trade A pos for a card
+                    cardMod -= (countA - silverA); //For VGL: trade A pos for a card
+                }
+
+                if (countA < silverA)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << silverA << _T("]; ");
                 }
             }
 			//else if(player.height <= heightManlet && rating == targetRate + silverManletBonus)
@@ -574,7 +580,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot++;
 				errorMsg << _T("Illegal Ability scores; ");
 			}
-			if(player.injury+1 > silverIR)
+			if(player.injury+1 != silverIR)
 			{
 				errorTot++;
 				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be ") << silverIR << _T("; ");
@@ -642,7 +648,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 }
             }
             else {
-                if (countA > regA) {
+                if (countA > goldA) {
                     cardMod -= (countA - goldA); //For VGL: trade A pos for a card
                 }
 
