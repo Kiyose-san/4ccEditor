@@ -303,6 +303,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             isManlet = true;
             numManlet++;
 			cardMod++; //Manlets get a bonus card
+            if (player.height < 175)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Height can be increased to 175]; ");
+            }
 		}
         else if(player.height == 180)
             numMid++;
@@ -365,7 +370,19 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     suggestionTot++;
                     suggestionMsg << _T("[Weak foot accuracy < 2]; ");
                 }
-			}
+            }
+            else {
+                if (player.weak_use + 1 < 4)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Weak foot usage < 4]; ");
+                }
+                if (player.weak_acc + 1 < 4)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Weak foot accuracy < 4]; ");
+                }
+            }
 
             if(player.form+1 != regForm)
 			{
@@ -377,10 +394,22 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
                 }
+                
+                if (countA < manletA && player.play_pos[12] != 2)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
+                }
             }
             else {
                 if (countA > regA) {
                     cardMod -= (countA - regA); //For VGL: trade A pos for a card
+                }
+
+                if (countA < regA && player.play_pos[12] != 2)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << regA << _T("]; ");
                 }
             }
 			
@@ -394,6 +423,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     errorTot++;
 					errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
 				}
+
+                if (cardCount < cardLimit)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
+                }
 				if(player.height > heightMid && player.height < heightTallGK)
 				{
                     errorTot++;
@@ -411,6 +446,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 					errorTot++;
 					errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
 				}
+
+                if (cardCount < cardLimit)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
+                }
 			}
             
             if(rating != targetRate)
@@ -452,11 +493,23 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorMsg << _T("Weak foot accuracy is not 4; ");
 			}*/
 
+            if (player.weak_use + 1 < 4)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Weak foot usage < 4]; ");
+            }
+            if (player.weak_acc + 1 < 4)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Weak foot accuracy < 4]; ");
+            }
+
             if(numSilver > reqNumSilver)
 			{
                 errorTot++;
 				errorMsg << _T("Too many Silver medals; ");
 			}
+
             if(player.form+1 != silverForm)
 			{
                 errorTot++;
@@ -475,6 +528,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             if (isManlet) {
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
+                }
+
+                if (countA < manletA)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
                 }
             }
             else {
@@ -497,6 +556,19 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot++;
 				errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
 			}
+
+            if (numCom < silverCOM)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << numCom << _T(" COM, can be ") << silverCOM << _T("]; ");
+            }
+
+            if (cardCount < cardLimit)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
+            }
+
             if(rating != targetRate)
 			{
                 errorTot++;
@@ -526,6 +598,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				errorMsg << _T("Weak foot accuracy is not 4; ");
 			}*/
 
+            if (player.weak_use + 1 < 4)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Weak foot usage < 4]; ");
+            }
+            if (player.weak_acc + 1 < 4)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Weak foot accuracy < 4]; ");
+            }
+
             if(numGold > reqNumGold)
 			{
                 errorTot++;
@@ -551,10 +634,22 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
                 }
+
+                if (countA < manletA)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
+                }
             }
             else {
                 if (countA > regA) {
                     cardMod -= (countA - goldA); //For VGL: trade A pos for a card
+                }
+
+                if (countA < goldA)
+                {
+                    suggestionTot++;
+                    suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << goldA << _T("]; ");
                 }
             }
 			
@@ -566,6 +661,19 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot++;
 				errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
 			}
+
+            if (numCom < goldCOM)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << numCom << _T(" COM, can be ") << goldCOM << _T("]; ");
+            }
+
+            if (cardCount < cardLimit)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
+            }
+
             if(rating != targetRate)
 			{
                 errorTot++;
