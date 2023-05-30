@@ -898,7 +898,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     }
     else //Using Red height system
     {
-		msgOut+=_T("Using Red height system\r\n");
+		//msgOut+=_T("Using Red height system\r\n");
         if(diff = numGiant)
         {
             errorTot += diff;
