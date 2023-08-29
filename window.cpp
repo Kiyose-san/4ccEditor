@@ -684,7 +684,7 @@ void setup_tab1(HWND H)
 		x1, y1+ydiff*13, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_GKLT, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Malicia"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Malicia*"), 
 		BS_AUTOCHECKBOX | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
 		x1 + 144, y1 + ydiff * 7, xc, 17, ghw_tab1, (HMENU)IDB_SKIL_MALI, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
