@@ -2,6 +2,7 @@
 #include <sstream>
 #include "editor.h"
 #include "resource.h"
+#include <list>
 #ifndef UNICODE  
   typedef std::string tstring; 
   typedef std::stringstream tstringstream;
@@ -13,14 +14,15 @@
 void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplayers, team_entry* gteams, int gnum_players)
 {
 	player_entry player;
+    std::list<player_entry> manlets_without_bonus;
 	tstring msgOut;
 	msgOut+=_T("Team: ");
 	msgOut+=gteams[teamSel].name;
 	msgOut+=_T("\r\n");
 
 	//Settings
-	int manletBonus = 0;
-	int silverManletBonus = 5;
+	int manletBonus = 5;
+	int silverManletBonus = 0;
 	int goldGiantPen = 0;
 	int silverGiantPen = 0;
 	int goldRate = 99;
@@ -53,17 +55,20 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 	int silverCOM = 1;
 	int goldCOM = 1;
 
-	int greenGiant = 0;
-	int greenTall = 0;
-	int greenMid = 0;
-	int greenManlet = 0;
+    int blueColossal = 1;
+	int blueGiant = 4;
+	int blueTall = 5;
+	int blueMid = 7;
+	int blueManlet = 6;
 
-	int redGiant = 0;
-	int redTall = 10;
-	int redMid = 7;
-	int redManlet = 6;
+    int purpleColossal = 0;
+	int purpleGiant = 0;
+	int purpleTall = 10;
+	int purpleMid = 7;
+	int purpleManlet = 6;
 
-	int heightGiant = 191;
+    int heightColossal = 210;
+	int heightGiant = 194;
 	int heightTall = 185;
 	int heightTallGK = 189;
 	int heightMid = 180;
@@ -75,11 +80,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     int numSilver = 0;
     int numGold = 0;
     //Count of height brackets
+    int numColossal = 0;
     int numGiant = 0;
     int numTall = 0;
     int numMid = 0;
     int numManlet = 0;
-    bool usingRed = true; //force red for vgl
+    bool usingPurple = false;
 
     int goldA = 2;
     int silverA = 2;
@@ -88,25 +94,13 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
     bool isManlet = false;
 
-    //Settings
-     manletBonus = 0;
-     goldRate = 99;
-     silverRate = 88;
-     greenGiant = 0;
-     greenTall = 0;
-     greenMid = 0;
-     greenManlet = 0;
-     redGiant = 0;
-     redTall = 10;
-     redMid = 7;
-     redManlet = 6;
-
      numGK = 0;
     //Player ratings
      numReg = 0;
      numSilver = 0;
      numGold = 0;
     //Height brackets
+     numColossal = 0;
      numGiant = 0;
      numTall = 0;
      numMid = 0;
@@ -298,25 +292,27 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		}
 
         isManlet = false;
-		if(player.height <= 175)
-		{
+        if (player.height <= 175)
+        {
             isManlet = true;
             numManlet++;
-			cardMod++; //Manlets get a bonus card
+            cardMod++; //Manlets get a bonus card
             if (player.height < 175)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Height can be increased to 175]; ");
             }
-		}
-        else if(player.height == 180)
+        }
+        else if (player.height == heightMid)
             numMid++;
-        else if(player.height == 185)
+        else if (player.height == heightTall)
             numTall++;
-        else if(player.height == 189 && player.reg_pos == 0) //GK
+        else if (player.height == heightTallGK && player.reg_pos == 0) //GK
             numTall++;
-        else if(player.height == 191)
+        else if (player.height == heightGiant)
             numGiant++;
+        else if (player.height == heightColossal)
+            numColossal++;
         else
 		{
             errorTot++;
@@ -371,7 +367,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     suggestionMsg << _T("[Weak foot accuracy < 2]; ");
                 }
             }
-            else {
+            else {                
                 if (player.weak_use + 1 < 4)
                 {
                     suggestionTot++;
@@ -453,12 +449,16 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
                 }
 			}
+
+            if (rating == targetRate && player.height <= heightManlet) { //If the player is a manlet and doesn't have the manlet bonus
+                manlets_without_bonus.push_back(player);
+            }
             
             if(rating != targetRate)
             {
                 if(rating == targetRate+manletBonus && player.height <= heightManlet)
 				{
-                    usingRed = true;
+                    usingPurple = true;
 					targetRate += manletBonus;
 					targetRate2 += manletBonus;
 				}
@@ -467,7 +467,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     errorTot++;
 					errorMsg << _T("Illegal Ability scores; ");
 				}
-            }
+            }            
 
 			if(player.injury+1 != regIR)
 			{
@@ -524,7 +524,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			{
 				targetRate -= silverGiantPen;
 				targetRate2 -= silverGiantPen;
-			}
+			}else if(player.height <= heightManlet && rating == targetRate + silverManletBonus)
+            {
+            	usingPurple = true;
+            	targetRate += silverManletBonus;
+            	targetRate2 += silverManletBonus;
+            }
             if (isManlet) {
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
@@ -536,7 +541,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
                 }
             }
-            else {
+            else{
                 if (countA > silverA) {
                     cardMod -= (countA - silverA); //For VGL: trade A pos for a card
                 }
@@ -547,12 +552,6 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << silverA << _T("]; ");
                 }
             }
-			//else if(player.height <= heightManlet && rating == targetRate + silverManletBonus)
-            //{
-			//	usingRed = true;
-			//	targetRate += silverManletBonus;
-			//	targetRate2 += silverManletBonus;
-			//}
             cardMod += min(silverTrickCards, numTrick); //3 free tricks
 			cardMod += min(silverCOM, numCom); //1 free COM
 			//cardMod += min(1, (countA - 1)); //1 free A-position
@@ -844,12 +843,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     tstringstream errorMsg;
 	tstringstream suggestionMsg;
     //Check heights
-    if(!usingRed) //Using Green height system
+    if(!usingPurple) //Using Blue height system
     {
-		msgOut+=_T("Using Green height system\r\n");
-        if(diff = greenGiant - numGiant)
+		msgOut+=_T("Using Blue height system\r\n");
+        if (diff = blueColossal - numColossal)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -857,9 +856,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numGiant << _T("/") << greenGiant << _T(" ") << heightGiant << _T("cm players; ");
+            errorMsg << _T("Has ") << numColossal << _T("/") << blueColossal<< _T(" ") << heightColossal << _T("cm players; ");
         }
-        if(diff = greenTall - numTall)
+        if(diff = blueGiant - numGiant)
         {
             if(diff>0)
             {
@@ -869,9 +868,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numTall << _T("/") << greenTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
+			errorMsg << _T("Has ") << numGiant << _T("/") << blueGiant << _T(" ") << heightGiant << _T("cm players; ");
         }
-        if(diff = greenMid - numMid)
+        if(diff = blueTall - numTall)
         {
             if(diff>0)
             {
@@ -881,9 +880,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numMid << _T("/") << greenMid << _T(" ") << heightMid << _T("cm players; ");
+			errorMsg << _T("Has ") << numTall << _T("/") << blueTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
         }
-        if(diff = greenManlet - numManlet)
+        if(diff = blueMid - numMid)
         {
             if(diff>0)
             {
@@ -893,18 +892,51 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numManlet << _T("/") << greenManlet << _T(" ") << heightManlet << _T("cm players; ");
+			errorMsg << _T("Has ") << numMid << _T("/") << blueMid << _T(" ") << heightMid << _T("cm players; ");
+        }
+        if(diff = blueManlet - numManlet)
+        {
+            if(diff>0)
+            {
+                errorTot += diff;
+            }
+            else
+            {
+                errorTot -= diff;
+            }
+			errorMsg << _T("Has ") << numManlet << _T("/") << blueManlet << _T(" ") << heightManlet << _T("cm players; ");
         }
     }
-    else //Using Red height system
+    else //Using purple height system
     {
-		//msgOut+=_T("Using Red height system\r\n");
-        if(diff = numGiant)
+		msgOut+=_T("Using Purple height system\r\n");
+        if (diff = purpleColossal - numColossal)
         {
+            if (diff > 0)
+            {
+                errorTot += diff;
+            }
+            else
+            {
+                errorTot -= diff;
+            }
             errorTot += diff;
-			errorMsg << _T("Has ") << numGiant << _T("/") << redGiant << _T(" ") << heightGiant << _T("cm players; ");
+            errorMsg << _T("Has ") << numColossal << _T("/") << purpleColossal << _T(" ") << heightColossal << _T("cm players; ");
         }
-        if(diff = redTall - numTall)
+        if(diff = purpleGiant - numGiant)
+        {
+            if (diff > 0)
+            {
+                errorTot += diff;
+            }
+            else
+            {
+                errorTot -= diff;
+            }
+            errorTot += diff;
+			errorMsg << _T("Has ") << numGiant << _T("/") << purpleGiant << _T(" ") << heightGiant << _T("cm players; ");
+        }
+        if(diff = purpleTall - numTall)
         {
             if(diff>0)
             {
@@ -914,9 +946,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numTall << _T("/") << redTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
+			errorMsg << _T("Has ") << numTall << _T("/") << purpleTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
         }
-        if(diff = redMid - numMid)
+        if(diff = purpleMid - numMid)
         {
             if(diff>0)
             {
@@ -926,9 +958,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numMid << _T("/") << redMid << _T(" ") << heightMid << _T("cm players; ");
+			errorMsg << _T("Has ") << numMid << _T("/") << purpleMid << _T(" ") << heightMid << _T("cm players; ");
         }
-        if(diff = redManlet - numManlet)
+        if(diff = purpleManlet - numManlet)
         {
             if(diff>0)
             {
@@ -938,7 +970,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numManlet << _T("/") << redManlet << _T(" ") << heightManlet << _T("cm players; ");
+			errorMsg << _T("Has ") << numManlet << _T("/") << purpleManlet << _T(" ") << heightManlet << _T("cm players; ");
+        }
+        std::list<player_entry>::iterator it;
+        for (it = manlets_without_bonus.begin(); it != manlets_without_bonus.end(); ++it) {
+            suggestionTot++;
+            suggestionMsg << _T("[Player ") << it->name << _T(" is a manlet and can have ") << regRate + manletBonus << _T(" rating]; \r\n");
         }
     }
 	if(errorMsg.rdbuf()->in_avail())
