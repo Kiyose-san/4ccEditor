@@ -828,20 +828,24 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)_T("8"));
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)_T("2"));
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)_T("4"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)_T("4"));	
-
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)_T("4"));
+					}
+				}
+				break;
+				case IDB_MAKE_GOLD_COLOR:
+				{
+					if (HIWORD(W) == BN_CLICKED)
+					{
 						wchar_t oldName[0x1000];
 						wchar_t newName[0x1000];
 
 						SendDlgItemMessage(ghw_main, IDT_PLAY_NAME, WM_GETTEXT, (WPARAM)(sizeof(oldName) / sizeof(oldName[0])), (LPARAM)oldName);
 
 						newName[0] = 0;
-						//wcscat(newName, L"cE0C068FF");
-						wcscat(newName, L"ccc9900ff");						
+						wcscat(newName, L"ccc9900ff");
 						wcscat(newName, oldName);
 
 						SendDlgItemMessage(ghw_main, IDT_PLAY_NAME, WM_SETTEXT, 0, (LPARAM)newName);
-
 					}
 				}
 				break;
@@ -856,16 +860,21 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)_T("2"));
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)_T("4"));
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)_T("4"));
-
+					}
+				}
+				break;
+				case IDB_MAKE_SILV_COLOR:
+				{
+					if (HIWORD(W) == BN_CLICKED)
+					{
 						wchar_t oldName[0x1000];
 						wchar_t newName[0x1000];
 
 						SendDlgItemMessage(ghw_main, IDT_PLAY_NAME, WM_GETTEXT, (WPARAM)(sizeof(oldName) / sizeof(oldName[0])), (LPARAM)oldName);
 
 						newName[0] = 0;
-						//wcscat(newName, L"cB7BEC5FF");
 						wcscat(newName, L"cccccccff");
-						
+
 						wcscat(newName, oldName);
 
 						SendDlgItemMessage(ghw_main, IDT_PLAY_NAME, WM_SETTEXT, 0, (LPARAM)newName);

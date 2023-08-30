@@ -38,14 +38,24 @@ void setup_main(HWND H)
 		270, 470, 20, 33, H, (HMENU)IDB_MOVE_PLYR, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Gold Medal and Add Name Color"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Gold Medal"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		20, 520, 250, 26, H, (HMENU)IDB_MAKE_GOLD, GetModuleHandle(NULL), NULL);	
+		20, 520, 170, 26, H, (HMENU)IDB_MAKE_GOLD, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Silver Medal and Add Name Color"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Add Color"),
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+		200, 520, 70, 26, H, (HMENU)IDB_MAKE_GOLD_COLOR, GetModuleHandle(NULL), NULL);
+	setup_control(hw_new, ghFont, scale_cntl_proc);
+
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Silver Medal"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		20, 552, 250, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
+		20, 552, 170, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
+	setup_control(hw_new, ghFont, scale_cntl_proc);
+
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Add Color"),
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+		200, 552, 70, 26, H, (HMENU)IDB_MAKE_SILV_COLOR, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Regular"), 
