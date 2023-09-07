@@ -22,7 +22,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 	//Settings
 	int manletBonus = 5;
-	int silverManletBonus = 0;
+	int silverManletBonus = 5;
 	int goldGiantPen = 0;
 	int silverGiantPen = 0;
 	int goldRate = 99;
