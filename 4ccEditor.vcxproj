@@ -45,6 +45,7 @@
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
     <IntDir>$(Configuration)\</IntDir>
     <LinkIncremental>true</LinkIncremental>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
@@ -112,6 +113,11 @@
   </ItemGroup>
   <ItemGroup>
     <Manifest Include="GdiScaling.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="4cc_med.ico" />
+    <Image Include="4cc_sm.ico" />
+    <Image Include="vgl_logo.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
