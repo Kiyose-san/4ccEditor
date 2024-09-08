@@ -49,8 +49,8 @@ void setup_main(HWND H)
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Silver Medal"), 
-		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		20, 552, 170, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, //| WS_DISABLED 
+		20, 552, 250, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Add Color"),

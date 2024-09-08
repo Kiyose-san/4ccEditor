@@ -297,7 +297,8 @@ void fill_appearance_entry16(player_entry &players, int &current_byte, void* ghd
 
 	players.glove_id = pDescriptorOld->data[current_byte] >> 2;
 	current_byte++;
-	players.glove_id += (pDescriptorOld->data[current_byte] & 15) << 6;
+	//players.glove_id += (pDescriptorOld->data[current_byte] & 15) << 6;
+	players.glove_id += (pDescriptorOld->data[current_byte]) << 6; //Extend to be 14 bits, using Unk B space
 
 	//Unknown B - 4/4
 	current_byte++;
@@ -401,7 +402,7 @@ void fill_team_ids16(team_entry &teams, int &current_byte, void* ghdescriptor)
 	current_byte++;
 
 	current_byte+=0xE;
-	teams.b_edit_name = (pDescriptorOld->data[current_byte] >> 7) & 1;
+	teams.b_edit_name = (pDescriptorOld->data[current_byte]) & 1;
 
 	current_byte+=0x82;
 
@@ -751,7 +752,8 @@ void extract_player_entry16(player_entry player, int &current_byte, int &appear_
 	
 	char tbuffer[16];
 	memset(tbuffer, 0, 16);
-	strcpy_s(tbuffer, 16, player.shirt_name);
+	//strcpy_s(tbuffer, 16, player.shirt_name);
+	strncpy_s(tbuffer, 16, player.shirt_name, 16-1);
 	memcpy(&(pDescriptorOld->data[current_byte]), tbuffer, 16);
 	//strcpy_s((char *)&(pDescriptorOld->data[current_byte]), 16, player.shirt_name); //FIX THIS
 	current_byte+=16;
@@ -773,7 +775,8 @@ void extract_player_entry16(player_entry player, int &current_byte, int &appear_
 	
 	pDescriptorOld->data[appear_byte] += (player.glove_id << 2) & 252; //6/10
 	appear_byte++;
-	pDescriptorOld->data[appear_byte] = (player.glove_id >> 6) & 15; //4/10
+	//pDescriptorOld->data[appear_byte] = (player.glove_id >> 6) & 15; //4/10
+	pDescriptorOld->data[appear_byte] = (player.glove_id >> 6); //8/14 - extended to be 14 bits, using Unk B space
 	
 	//Unknown B - 4/4
 	appear_byte++;
@@ -888,7 +891,7 @@ void extract_team_info16(team_entry team, int &current_byte, void* ghdescriptor)
 	current_byte++;
 	
 	current_byte+=0xE;
-	pDescriptorOld->data[current_byte] = pDescriptorOld->data[current_byte] | (team.b_edit_name << 7);
+	pDescriptorOld->data[current_byte] = pDescriptorOld->data[current_byte] | (team.b_edit_name & 1);
 
 	current_byte+=0x82;
 	
