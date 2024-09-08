@@ -72,8 +72,8 @@ BEGIN
         BEGIN
             MENUITEM "&Current Team",               IDM_DATA_AATFC
             MENUITEM "&Select Teams",               IDM_DATA_AATFS
-            MENUITEM "&Current Team with suggestions",               IDM_DATA_AATFC_SUG
-            MENUITEM "&Select Teams with suggestions",               IDM_DATA_AATFS_SUG
+            MENUITEM "&Current Team (with suggestions)",               IDM_DATA_AATFC_SUG
+            MENUITEM "&Select Teams (with suggestions)",               IDM_DATA_AATFS_SUG
             MENUITEM "Compare &EDITs",              IDM_DATA_COMPE
         END
         MENUITEM "&Output rosters to TSV",      IDM_DATA_OUTPUT
