@@ -23,7 +23,9 @@ processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
 LRESULT CALLBACK wnd_proc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK aatf_sing_dlg_proc(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK aatf_mult_dlg_proc(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK aatf_mult_dlg_proc_sug(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK aatf_sel_dlg_proc(HWND, UINT, WPARAM, LPARAM);
+BOOL CALLBACK aatf_sel_dlg_proc_sug(HWND, UINT, WPARAM, LPARAM);
 BOOL CALLBACK aatf_comp_dlg_proc(HWND, UINT, WPARAM, LPARAM);
 
 //Control procedures:

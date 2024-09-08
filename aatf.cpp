@@ -4,80 +4,77 @@
 #include "resource.h"
 #include <list>
 #ifndef UNICODE  
-  typedef std::string tstring; 
-  typedef std::stringstream tstringstream;
+typedef std::string tstring;
+typedef std::stringstream tstringstream;
 #else
-  typedef std::wstring tstring; 
-  typedef std::wstringstream tstringstream;
+typedef std::wstring tstring;
+typedef std::wstringstream tstringstream;
 #endif
 
-void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplayers, team_entry* gteams, int gnum_players)
+void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplayers, team_entry* gteams, int gnum_players, bool useSuggestions)
 {
-	player_entry player;
+    player_entry player;
     std::list<player_entry> manlets_without_bonus;
-	tstring msgOut;
-	msgOut+=_T("Team: ");
-	msgOut+=gteams[teamSel].name;
-	msgOut+=_T("\r\n");
+    tstring msgOut;
+    msgOut += _T("Team: ");
+    msgOut += gteams[teamSel].name;
+    msgOut += _T("\r\n");
 
-	//============================
-	//Settings
-	int manletBonus = 5;
-	int silverManletBonus = 5;
-	int goldGiantPen = 0;
-	int silverGiantPen = 0;
-	int goldRate = 99;
-	int silverRate = 88;
-	int regRate = 77;
-	int gkRate = 77;
-	int reqNumGold = 2;
-	int reqNumSilver = 2;
+    //Settings
+    int manletBonus = 0;
+    int silverManletBonus = 0;
+    int goldGiantPen = 0;
+    int silverGiantPen = 0;
+    int goldRate = 99;
+    int silverRate = 88;
+    int regRate = 77;
+    int gkRate = 77;
+    int reqNumGold = 2;
+    int reqNumSilver = 3;
 
-	int goldForm = 8;
-	int silverForm = 8;
-	int regForm = 4;
+    int goldForm = 8;
+    int silverForm = 8;
+    int regForm = 4;
 
-	int goldIR = 2; //Injury resistence
-	int silverIR = 2;
-	int regIR = 1;
+    int goldIR = 2; //Injury resistence
+    int silverIR = 2;
+    int regIR = 1;
 
-	int gkSkillCards = 3;
-	int regSkillCards = 3;
-	int silverSkillCards = 4;
-	int goldSkillCards = 5;
+    int gkSkillCards = 3;
+    int regSkillCards = 3;
+    int silverSkillCards = 4;
+    int goldSkillCards = 5;
 
-	int gkTrickCards = 99;
-	int regTrickCards = 99;
-	int silverTrickCards = 99;
-	int goldTrickCards = 99;
+    int gkTrickCards = 99;
+    int regTrickCards = 99;
+    int silverTrickCards = 99;
+    int goldTrickCards = 99;
 
     int gkCOM = 0;
-	int regCOM = 0;
-	int silverCOM = 1;
-	int goldCOM = 1;
+    int regCOM = 0;
+    int silverCOM = 1;
+    int goldCOM = 1;
 
-    int blueColossal = 1;
-	int blueGiant = 4;
-	int blueTall = 5;
-	int blueMid = 7;
-	int blueManlet = 6;
+    int blueColossal = 0;
+    int blueGiant = 0;
+    int blueTall = 0;
+    int blueMid = 0;
+    int blueManlet = 0;
 
     int purpleColossal = 0;
-	int purpleGiant = 0;
-	int purpleTall = 10;
-	int purpleMid = 7;
-	int purpleManlet = 6;
+    int purpleGiant = 0;
+    int purpleTall = 10;
+    int purpleMid = 7;
+    int purpleManlet = 6;
 
     int heightColossal = 210;
-	int heightGiant = 194;
-	int heightTall = 185;
-	int heightTallGK = 189;
-	int heightMid = 180;
-	int heightManlet = 175;
+    int heightGiant = 194;
+    int heightTall = 185;
+    int heightTallGK = 189;
+    int heightMid = 180;
+    int heightManlet = 175;
 
-	//============================
-
-	int numGK = 0;
+    int numGK = 0;
     //Count of player ratings
     int numReg = 0;
     int numSilver = 0;
@@ -88,7 +85,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     int numTall = 0;
     int numMid = 0;
     int numManlet = 0;
-    bool usingPurple = false;
+    bool usingPurple = true;
 
     int goldA = 2;
     int silverA = 2;
@@ -97,51 +94,49 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
     bool isManlet = false;
 
-     numGK = 0;
+    numGK = 0;
     //Player ratings
-     numReg = 0;
-     numSilver = 0;
-     numGold = 0;
+    numReg = 0;
+    numSilver = 0;
+    numGold = 0;
     //Height brackets
-     numColossal = 0;
-     numGiant = 0;
-     numTall = 0;
-     numMid = 0;
-     numManlet = 0;
+    numColossal = 0;
+    numGiant = 0;
+    numTall = 0;
+    numMid = 0;
+    numManlet = 0;
     int numTrickOrCom = 0;
-    
+
     int errorTot = 0;
     int suggestionTot = 0;
 
     bool captainHasCard = false;
-    
-	for(int ii=0; ii<gteams[teamSel].num_on_team; ii++)
-	{
-		//Find each player on team
-		for(int jj=0; jj<gnum_players; jj++)
-		{
-			if(gplayers[jj].id == gteams[teamSel].players[ii])
-			{
-				player = gplayers[jj];
-				break;
-			}
-		}
 
-		msgOut+=_T("\x2022 Checking ");
-		msgOut+=player.name;
-		msgOut+=_T("\r\n");
+    for (int ii = 0; ii < gteams[teamSel].num_on_team; ii++)
+    {
+        //Find each player on team
+        for (int jj = 0; jj < gnum_players; jj++)
+        {
+            if (gplayers[jj].id == gteams[teamSel].players[ii])
+            {
+                player = gplayers[jj];
+                break;
+            }
+        }
 
-		tstringstream errorMsg;
+        msgOut += _T("\x2022 Checking ");
+        msgOut += player.name;
+        msgOut += _T("\r\n");
+
+        tstringstream errorMsg;
         tstringstream suggestionMsg;
 
-		int cardCount = 0;
+        int cardCount = 0;
         int cardMod = 0;
-		int cardLimit = 0;
-		int heightMod = 0;
-		int weakFoot = 2;
+        int cardLimit = 0;
         bool hasTrick = false;
-		int targetRate = 0, targetRate2 = 0, targetRate3 = 0;
-		int rating = player.drib;
+        int targetRate = 0, targetRate2 = 0;
+        int rating = player.drib;
         rating = max(player.gk, rating);
         rating = max(player.finish, rating);
         rating = max(player.lowpass, rating);
@@ -152,7 +147,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         rating = max(player.clearing, rating);
         rating = max(player.reflex, rating);
         rating = max(player.body_ctrl, rating);
-        if(pesVersion!=16) rating = max(player.phys_cont, rating); //Not in 16
+        if (pesVersion != 16) rating = max(player.phys_cont, rating); //Not in 16
         rating = max(player.kick_pwr, rating);
         rating = max(player.exp_pwr, rating);
         rating = max(player.ball_ctrl, rating);
@@ -162,141 +157,139 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         rating = max(player.place_kick, rating);
         rating = max(player.stamina, rating);
         rating = max(player.speed, rating);
-		if(pesVersion>19) rating = max(player.aggres, rating);
-		
-		//Check if registered pos has playable set to A
-        if(player.reg_pos == 12 && player.play_pos[0] != 2)
-		{
-            errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 11 && player.play_pos[1] != 2)
-		{
-            errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 10 && player.play_pos[3] != 2)
-		{
-            errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 9 && player.play_pos[2] != 2)
+        if (pesVersion > 19) rating = max(player.aggres, rating);
+
+        //Check if registered pos has playable set to A
+        if (player.reg_pos == 12 && player.play_pos[0] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 8 && player.play_pos[4] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 11 && player.play_pos[1] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 7 && player.play_pos[8] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 10 && player.play_pos[3] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 6 && player.play_pos[7] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 9 && player.play_pos[2] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 5 && player.play_pos[6] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 8 && player.play_pos[4] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 4 && player.play_pos[5] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 7 && player.play_pos[8] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 3 && player.play_pos[11] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 6 && player.play_pos[7] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 2 && player.play_pos[10] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 5 && player.play_pos[6] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 1 && player.play_pos[9] != 2)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 4 && player.play_pos[5] != 2)
         {
             errorTot++;
-			errorMsg << _T("Doesn't have A in registered position; ");
-		}
-        else if(player.reg_pos == 0)
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 3 && player.play_pos[11] != 2)
+        {
+            errorTot++;
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 2 && player.play_pos[10] != 2)
+        {
+            errorTot++;
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 1 && player.play_pos[9] != 2)
+        {
+            errorTot++;
+            errorMsg << _T("Doesn't have A in registered position; ");
+        }
+        else if (player.reg_pos == 0)
         {
             numGK++;
-            if(player.play_pos[12] != 2)
-			{
+            if (player.play_pos[12] != 2)
+            {
                 errorTot++;
-				errorMsg << _T("Doesn't have A in registered position; ");
-			}
+                errorMsg << _T("Doesn't have A in registered position; ");
+            }
         }
 
-		//Count A positions
+        //Count A positions
         int countA = 0;
-        for(int jj=0;jj<13;jj++)
+        for (int jj = 0; jj < 13; jj++)
         {
-            if(player.play_pos[jj] > 0)
-				countA++;
+            if (player.play_pos[jj] > 0)
+                countA++;
         }
 
         //If more than 1 A, 1 card less for each (Not for VGL)
-        if(countA > 1)
+        if (countA > 1)
         {
-            if(player.play_pos[12] == 2) //Can't have GK as second A
-			{
+            if (player.play_pos[12] == 2) //Can't have GK as second A
+            {
                 errorTot++;
-				errorMsg << _T("Has GK as second A position; ");
-			}
+                errorMsg << _T("Has GK as second A position; ");
+            }
             //cardMod -= (countA - 1);
         }
 
-		//Count cards
-		int numTrick = 0;
-		int numCom = 0;
-		int numSkill;
-		if(pesVersion==19) numSkill=39;
-		else if(pesVersion>19) numSkill=41;
-		else numSkill=28;
-        for(int jj=0;jj<numSkill;jj++)
+        //Count cards
+        int numTrick = 0;
+        int numCom = 0;
+        int numSkill;
+        if (pesVersion == 19) numSkill = 39;
+        else if (pesVersion > 19) numSkill = 41;
+        else numSkill = 28;
+        for (int jj = 0; jj < numSkill; jj++)
         {
-            if(player.play_skill[jj])
+            if (player.play_skill[jj])
             {
                 cardCount++;
-				//SPECIAL Winter/Spring 24: Malicia (21) is a free card
-				if(jj==21) cardMod++;
                 //Captain gets free captaincy card
                 if (jj == 25 && player.id == gteams[teamSel].players[gteams[teamSel].captain_ind]) {
                     captainHasCard = true;
                     cardMod++;
                 }
-                    
+
                 //Trick cards may be free, count number
                 //if(jj<6 || jj==16 || jj==28 || jj==29 || jj==30 || jj==34)
                 if (jj < 6 || jj == 16 || jj == 21 || jj == 28 || jj == 29 || jj == 30 || jj == 34) //<- this is for PES19
-				{
+                {
                     hasTrick = true;
-					numTrick++;
-				}
+                    numTrick++;
+                }
             }
         }
 
         //Captain gets a free regular card
         if (player.id == gteams[teamSel].players[gteams[teamSel].captain_ind]) {
-            cardMod++;            
+            cardMod++;
         }
 
-		for(int jj=0;jj<7;jj++)
+        for (int jj = 0; jj < 7; jj++)
         {
-            if(player.com_style[jj])
-			{
-				cardCount++;
-				numCom++;
-			}
-		}
+            if (player.com_style[jj])
+            {
+                cardCount++;
+                numCom++;
+            }
+        }
 
         isManlet = false;
         if (player.height <= 175)
@@ -304,7 +297,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             isManlet = true;
             numManlet++;
             cardMod++; //Manlets get a bonus card
-            if (player.height < 175)
+            if (player.height < 175 && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Height can be increased to 175]; ");
@@ -321,86 +314,84 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         else if (player.height == heightColossal)
             numColossal++;
         else
-		{
+        {
             errorTot++;
-			errorMsg << _T("Illegal height (") << player.height << _T(" cm); ");
-		}
+            errorMsg << _T("Illegal height (") << player.height << _T(" cm); ");
+        }
 
-		if(player.age<15 || player.age>50)
-		{
-			errorTot++;
-			errorMsg << _T("Age out of range (15,50); ");
-		}
+        if (player.age < 15 || player.age>50)
+        {
+            errorTot++;
+            errorMsg << _T("Age out of range (15,50); ");
+        }
 
-		if(player.weight<max(30,player.height-129) || player.weight>(player.height-81))
-		{
-			errorTot++;
-			errorMsg << _T("Weight out of range (") << max(30,player.height-129) << _T(",") << player.height-81 << _T("); ");
-		}
+        if (player.weight<max(30, player.height - 129) || player.weight>(player.height - 81))
+        {
+            errorTot++;
+            errorMsg << _T("Weight out of range (") << max(30, player.height - 129) << _T(",") << player.height - 81 << _T("); ");
+        }
 
-		/* REGULAR */
-		if(rating < silverRate-silverGiantPen) //Regular player
+        /* REGULAR */
+        if (rating < silverRate - silverGiantPen) //Regular player
         {
             numReg++;
-			targetRate = regRate;
-			targetRate2 = regRate;
-			targetRate3 = regRate;
-			if(player.reg_pos == 0) //GK target rate is 77
+            targetRate = regRate;
+            targetRate2 = regRate;
+            if (player.reg_pos == 0) //GK target rate is 77
             {
-				targetRate = gkRate;
-				targetRate2 = gkRate;
-				targetRate3 = gkRate;
-			}
+                targetRate = gkRate;
+                targetRate2 = gkRate;
+            }
 
-			/*if(countA > 3)
-			{
-				if(player.weak_use+1 > 2)
-				{
-					errorTot++;
-					errorMsg << _T("Weak foot usage > 2; ");
-				}
-				if(player.weak_acc+1 > 2)
-				{
-					errorTot++;
-					errorMsg << _T("Weak foot accuracy > 2; ");
-				}
+            if (player.height > heightManlet)
+            {
+                if (player.weak_use + 1 > 2)
+                {
+                    errorTot++;
+                    errorMsg << _T("Weak foot usage > 2; ");
+                }
+                if (player.weak_acc + 1 > 2)
+                {
+                    errorTot++;
+                    errorMsg << _T("Weak foot accuracy > 2; ");
+                }
 
-                if (player.weak_use+1 < 2)
+                if (player.weak_use + 1 < 2 && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Weak foot usage < 2]; ");
                 }
-                if (player.weak_acc+1 < 2)
+                if (player.weak_acc + 1 < 2 && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Weak foot accuracy < 2]; ");
                 }
             }
-            else {                
-                if (player.weak_use + 1 < 4)
+            else {
+                if (player.weak_use + 1 < 4 && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Weak foot usage < 4]; ");
                 }
-                if (player.weak_acc + 1 < 4)
+                if (player.weak_acc + 1 < 4 && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Weak foot accuracy < 4]; ");
                 }
             }
 
-            if(player.form+1 != regForm)
-			{
+            if (player.form + 1 != regForm)
+            {
                 errorTot++;
-				errorMsg << _T("Form is ") << player.form+1 << _T(", should be ") << regForm << _T("; ");
-			}
+                errorMsg << _T("Form is ") << player.form + 1 << _T(", should be ") << regForm << _T("; ");
+            }
 
             if (isManlet) {
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
                 }
-                
-                if (countA < manletA && player.play_pos[12] != 2)
+
+                if (countA < manletA && player.play_pos[12] != 2 && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
@@ -411,246 +402,246 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     cardMod -= (countA - regA); //For VGL: trade A pos for a card
                 }
 
-                if (countA < regA && player.play_pos[12] != 2)
+                if (countA < regA && player.play_pos[12] != 2 && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << regA << _T("]; ");
                 }
             }
-			
-            if(player.reg_pos == 0) //GK gets 2 cards
-            {
-				cardMod += min(gkTrickCards, numTrick); //1 free tricks
-                cardMod += min(gkCOM, numCom); //0 free COM styles
-				cardLimit = gkSkillCards + cardMod;
-                if(cardCount > cardLimit)
-				{
-                    errorTot++;
-					errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
-				}
 
-                if (cardCount < cardLimit)
+            if (player.reg_pos == 0) //GK gets 2 cards
+            {
+                cardMod += min(gkTrickCards, numTrick); //1 free tricks
+                cardMod += min(gkCOM, numCom); //0 free COM styles
+                cardLimit = gkSkillCards + cardMod;
+                if (cardCount > cardLimit)
+                {
+                    errorTot++;
+                    errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
+                }
+
+                if (cardCount < cardLimit && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
                 }
-				if(player.height > heightMid && player.height < heightTallGK)
-				{
+                if (player.height > heightMid && player.height < heightTallGK)
+                {
                     errorTot++;
-					errorMsg << _T("GKs in this bracket must be ") << heightTallGK << _T("cm; ");
-				}
-				if (player.height > heightGiant)
-				{
-					errorMsg << _T("GK heights cannot exceed ") << heightGiant << _T("cm; ");
-				}
+                    errorMsg << _T("GKs in this bracket must be ") << heightTallGK << _T("cm; ");
+                }
             }
             else
-			{
-				cardMod += min(regCOM, numCom); //0 free COM styles
-				cardMod += min(regTrickCards, numTrick); //2 free tricks
-				//cardMod += min(1, (countA - 1)); //1 free A-position
-				cardLimit = regSkillCards + cardMod; //3 skill cards
-				if(cardCount > cardLimit)
-				{
-					errorTot++;
-					errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
-				}
+            {
+                cardMod += min(regCOM, numCom); //0 free COM styles
+                cardMod += min(regTrickCards, numTrick); //2 free tricks
+                //cardMod += min(1, (countA - 1)); //1 free A-position
+                cardLimit = regSkillCards + cardMod; //3 skill cards
+                if (cardCount > cardLimit)
+                {
+                    errorTot++;
+                    errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
+                }
 
-                if (cardCount < cardLimit)
+                if (cardCount < cardLimit && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
                 }
-			}
+            }
 
-            if (rating == targetRate && player.height <= heightManlet) { //If the player is a manlet and doesn't have the manlet bonus
+            if (rating == targetRate && player.height < heightManlet) { //If the player is a manlet and doesn't have the manlet bonus
                 manlets_without_bonus.push_back(player);
             }
-            
-            if(rating != targetRate)
-            {
-                if(rating == targetRate+manletBonus && player.height <= heightManlet)
-				{
-                    usingPurple = true;
-					targetRate += manletBonus;
-					targetRate2 += manletBonus;
-				}
-				else
-					targetRate3 += 5;
-				if (countA > 1)
-				{
-					errorTot++;
-					errorMsg << _T("Illegal 2nd A position on red heights non-medal forward; ");
-				}
-            }            
 
-			if(player.injury+1 != regIR)
-			{
-				heightMod = 5;
-			}
-		}
-		/* SILVER */
-        else if(rating < goldRate-goldGiantPen) //Silver player
+            if (rating != targetRate)
+            {
+                if (rating == targetRate + manletBonus && player.height <= heightManlet)
+                {
+                    usingPurple = true;
+                    targetRate += manletBonus;
+                    targetRate2 += manletBonus;
+                }
+                else
+                {
+                    errorTot++;
+                    errorMsg << _T("Illegal Ability scores; ");
+                }
+            }
+
+            if (player.injury + 1 != regIR)
+            {
+                errorTot++;
+                errorMsg << _T("Injury resist is ") << player.injury + 1 << _T(", should be ") << regIR << _T("; ");
+            }
+        }
+        /* SILVER */
+        else if (rating < goldRate - goldGiantPen) //Silver player
         {
             numSilver++;
-			targetRate = silverRate;
-			targetRate2 = silverRate;
-			targetRate3 = silverRate;
+            targetRate = silverRate;
+            targetRate2 = silverRate;
 
-			weakFoot = 4;
+            /*if(player.weak_use+1 != 4)
+            {
+                errorTot++;
+                errorMsg << _T("Weak foot usage is not 4; ");
+            }
+            if(player.weak_acc+1 != 4)
+            {
+                errorTot++;
+                errorMsg << _T("Weak foot accuracy is not 4; ");
+            }*/
 
-            if (player.weak_use + 1 < 4)
+            if (player.weak_use + 1 < 4 && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Weak foot usage < 4]; ");
             }
-            if (player.weak_acc + 1 < 4)
+            if (player.weak_acc + 1 < 4 && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Weak foot accuracy < 4]; ");
             }
 
-            if(numSilver > reqNumSilver)
-			{
-                errorTot++;
-				errorMsg << _T("Too many Silver medals; ");
-			}
-
-            if(player.form+1 != silverForm)
-			{
-                errorTot++;
-				errorMsg << _T("Form is ") << player.form+1 << _T(", should be ") << silverForm << _T("; ");
-			}
-            if(player.reg_pos == 0) //Medals can't be GK
-			{
-                errorTot++;
-				errorMsg << _T("Medals cannot play as GK; ");
-			}
-			if(player.height >= heightGiant) //HA get penalty
-			{
-				targetRate -= silverGiantPen;
-				targetRate2 -= silverGiantPen;
-			}else if(player.height <= heightManlet && rating == targetRate + silverManletBonus)
+            if (numSilver > reqNumSilver)
             {
-            	usingPurple = true;
-            	targetRate += silverManletBonus;
-            	targetRate2 += silverManletBonus;
+                errorTot++;
+                errorMsg << _T("Too many Silver medals; ");
+            }
+
+            if (player.form + 1 != silverForm)
+            {
+                errorTot++;
+                errorMsg << _T("Form is ") << player.form + 1 << _T(", should be ") << silverForm << _T("; ");
+            }
+            if (player.reg_pos == 0) //Medals can't be GK
+            {
+                errorTot++;
+                errorMsg << _T("Medals cannot play as GK; ");
+            }
+            if (player.height == heightGiant) //HA get penalty
+            {
+                targetRate -= silverGiantPen;
+                targetRate2 -= silverGiantPen;
+            }
+            else if (player.height <= heightManlet && rating == targetRate + silverManletBonus)
+            {
+                usingPurple = true;
+                targetRate += silverManletBonus;
+                targetRate2 += silverManletBonus;
             }
             if (isManlet) {
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
                 }
 
-                if (countA < manletA)
+                if (countA < manletA && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
                 }
             }
-            else{
+            else {
                 if (countA > silverA) {
                     cardMod -= (countA - silverA); //For VGL: trade A pos for a card
                 }
 
-                if (countA < silverA)
+                if (countA < silverA && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << silverA << _T("]; ");
                 }
             }
             cardMod += min(silverTrickCards, numTrick); //3 free tricks
-			cardMod += min(silverCOM, numCom); //1 free COM
-			//cardMod += min(1, (countA - 1)); //1 free A-position
-			cardLimit = silverSkillCards + cardMod; //4 skill cards
-            if(cardCount > cardLimit)
-			{
+            cardMod += min(silverCOM, numCom); //1 free COM
+            //cardMod += min(1, (countA - 1)); //1 free A-position
+            cardLimit = silverSkillCards + cardMod; //4 skill cards
+            if (cardCount > cardLimit)
+            {
                 errorTot++;
-				errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
-			}
+                errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
+            }
 
-            if (numCom < silverCOM)
+            if (numCom < silverCOM && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Has ") << numCom << _T(" COM, can be ") << silverCOM << _T("]; ");
             }
 
-            if (cardCount < cardLimit)
+            if (cardCount < cardLimit && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
             }
 
-            if(rating != targetRate)
-			{
+            if (rating != targetRate)
+            {
                 errorTot++;
-				errorMsg << _T("Illegal Ability scores; ");
-			}
-			if(player.injury+1 != silverIR)
-			{
-				errorTot++;
-				errorMsg << _T("Injury resist is ") << player.injury+1 << _T(", should be ") << silverIR << _T("; ");
-			}
+                errorMsg << _T("Illegal Ability scores; ");
+            }
+            if (player.injury + 1 != silverIR)
+            {
+                errorTot++;
+                errorMsg << _T("Injury resist is ") << player.injury + 1 << _T(", should be ") << silverIR << _T("; ");
+            }
         }
-		/* GOLD */
+        /* GOLD */
         else //rating == 99 //Gold player
         {
             numGold++;
-			targetRate = goldRate;
-			targetRate2 = goldRate;
-			targetRate3 = goldRate;
+            targetRate = goldRate;
+            targetRate2 = goldRate;
 
-			weakFoot = 4;
+            /*if(player.weak_use+1 != 4)
+            {
+                errorTot++;
+                errorMsg << _T("Weak foot usage is not 4; ");
+            }
+            if(player.weak_acc+1 != 4)
+            {
+                errorTot++;
+                errorMsg << _T("Weak foot accuracy is not 4; ");
+            }*/
 
-            if (player.weak_use + 1 < 4)
+            if (player.weak_use + 1 < 4 && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Weak foot usage < 4]; ");
             }
-            if (player.weak_acc + 1 < 4)
+            if (player.weak_acc + 1 < 4 && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Weak foot accuracy < 4]; ");
             }
 
-            if(numGold > reqNumGold)
-			{
-                errorTot++;
-				errorMsg << _T("Too many Gold medals; ");
-			}
-            if(player.form+1 != goldForm)
-			{
-                errorTot++;
-				errorMsg << _T("Form is ") << player.form+1 << _T(", should be ") << goldForm << _T("; ");
-			}
-            if(player.reg_pos == 0) //Medals can't be GK
-			{
-                errorTot++;
-				errorMsg << _T("Medals cannot play as GK; ");
-			}
-			if(player.height >= heightGiant) //Medal HA penalty
-			{
-				targetRate -= goldGiantPen;
-				targetRate2 -= goldGiantPen;
-				targetRate3 -= goldGiantPen;
-			}
-			else if(player.height <= heightManlet && usingRed)
+            if (numGold > reqNumGold)
             {
-				targetRate += goldManletBonus;
-				targetRate2 += goldManletBonus;
-				targetRate3 += goldManletBonus;
-			}
-
-			if (player.height > heightGiant)
-			{
-				errorMsg << _T("Gold heights cannot exceed ") << heightGiant << _T("cm; ");
-			}
+                errorTot++;
+                errorMsg << _T("Too many Gold medals; ");
+            }
+            if (player.form + 1 != goldForm)
+            {
+                errorTot++;
+                errorMsg << _T("Form is ") << player.form + 1 << _T(", should be ") << goldForm << _T("; ");
+            }
+            if (player.reg_pos == 0) //Medals can't be GK
+            {
+                errorTot++;
+                errorMsg << _T("Medals cannot play as GK; ");
+            }
+            if (player.height == heightGiant) //Medal HA penalty
+            {
+                targetRate -= goldGiantPen;
+                targetRate2 -= goldGiantPen;
+            }
 
             if (isManlet) {
                 if (countA > manletA) {
                     cardMod -= (countA - manletA); //For VGL: trade A pos for a card
                 }
 
-                if (countA < manletA)
+                if (countA < manletA && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << manletA << _T("]; ");
@@ -661,222 +652,201 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                     cardMod -= (countA - goldA); //For VGL: trade A pos for a card
                 }
 
-                if (countA < goldA)
+                if (countA < goldA && useSuggestions)
                 {
                     suggestionTot++;
                     suggestionMsg << _T("[Has ") << countA << _T(" A position, can be ") << goldA << _T("]; ");
                 }
             }
-			
-            cardMod += min(goldTrickCards, numTrick); //4 free tricks
-			cardMod += min(goldCOM, numCom); //2 free COMs
-			cardLimit = goldSkillCards + cardMod; //5 skill cards
-            
-			if(player.injury+1 > goldIR)
-			{
-                errorTot++;
-				errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
-			}
 
-            if (numCom < goldCOM)
+            cardMod += min(goldTrickCards, numTrick); //4 free tricks
+            cardMod += min(goldCOM, numCom); //2 free COMs
+            cardLimit = goldSkillCards + cardMod; //5 skill cards
+            if (cardCount > cardLimit)
+            {
+                errorTot++;
+                errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
+            }
+
+            if (numCom < goldCOM && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Has ") << numCom << _T(" COM, can be ") << goldCOM << _T("]; ");
             }
 
-            if (cardCount < cardLimit)
+            if (cardCount < cardLimit && useSuggestions)
             {
                 suggestionTot++;
                 suggestionMsg << _T("[Has ") << cardCount << _T(" cards, can be ") << cardLimit << _T("]; ");
             }
 
-            if(rating != targetRate)
-			{
+            if (rating != targetRate)
+            {
                 errorTot++;
-				errorMsg << _T("Illegal Ability scores; ");
-			}
+                errorMsg << _T("Illegal Ability scores; ");
+            }
 
-		//Check weak foot ratings
-		if (player.weak_use + 1 > weakFoot)
-		{
-			errorTot++;
-			errorMsg << _T("Weak foot usage > ") << weakFoot << _T("; ");
-		}
-		if (player.weak_acc + 1 > weakFoot)
-		{
-			errorTot++;
-			errorMsg << _T("Weak foot accuracy > ") << weakFoot << _T("; ");
-		}
+            if (player.injury + 1 > goldIR)
+            {
+                errorTot++;
+                errorMsg << _T("Injury resist is ") << player.injury + 1 << _T(", should be ") << goldIR << _T("; ");
+            }
+        }
 
-		//Check player card count
-		if (cardCount > cardLimit)
-		{
-			errorTot++;
-			errorMsg << _T("Has ") << cardCount << _T(" cards, only allowed ") << cardLimit << _T("; ");
-		}
-
-		//Check PES skill card limit of 10
-		//if(cardCount-numCom > 10)
-		//{
+        //Check PES skill card limit of 10
+        //if(cardCount-numCom > 10)
+        //{
         //    errorTot++;
-		//	errorMsg << _T("Has ") << cardCount-numCom << _T(" skill cards, PES limit is 10, please swap to COM cards or trade for additional A positions; ");
-		//}
+        //	errorMsg << _T("Has ") << cardCount-numCom << _T(" skill cards, PES limit is 10, please swap to COM cards or trade for additional A positions; ");
+        //}
 
-		//Check player overall rating
-		if (rating != targetRate)
-		{
-			errorTot++;
-			errorMsg << _T("Illegal Ability scores; ");
-		}
-
-		//Check individual skill ratings
-		if(player.drib != targetRate)
+        if (player.drib != targetRate)
         {
             errorTot++;
-			errorMsg << _T("Dribbling is ") << player.drib << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Dribbling is ") << player.drib << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.gk != targetRate)
+        if (player.gk != targetRate)
         {
             errorTot++;
-			errorMsg << _T("Goalkeeping is ") << player.gk << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Goalkeeping is ") << player.gk << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.finish != targetRate)
-		{
+        if (player.finish != targetRate2)
+        {
             errorTot++;
-			errorMsg << _T("Finishing is ") << player.finish << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Finishing is ") << player.finish << _T(", should be ") << targetRate2 << _T("; ");
         }
-        if(player.lowpass != targetRate)
-		{
+        if (player.lowpass != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Low Pass is ") << player.lowpass << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Low Pass is ") << player.lowpass << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.loftpass != targetRate)
-		{
+        if (player.loftpass != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Lofted Pass is ") << player.loftpass << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Lofted Pass is ") << player.loftpass << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.header != targetRate)
-		{
+        if (player.header != targetRate2)
+        {
             errorTot++;
-			errorMsg << _T("Header is ") << player.header << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Header is ") << player.header << _T(", should be ") << targetRate2 << _T("; ");
         }
-        if(player.swerve != targetRate)
-		{
+        if (player.swerve != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Swerve is ") << player.swerve << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Swerve is ") << player.swerve << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.catching != targetRate)
-		{
+        if (player.catching != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Catching is ") << player.catching << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Catching is ") << player.catching << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.clearing != targetRate)
-		{
+        if (player.clearing != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Clearing is ") << player.clearing << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Clearing is ") << player.clearing << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.reflex != targetRate)
-		{
+        if (player.reflex != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Reflexes is ") << player.reflex << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Reflexes is ") << player.reflex << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.body_ctrl != targetRate)
-		{
+        if (player.body_ctrl != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Body Control is ") << player.body_ctrl << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Body Control is ") << player.body_ctrl << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.phys_cont != targetRate && pesVersion!=16) //Not in 16
-		{
+        if (player.phys_cont != targetRate && pesVersion != 16) //Not in 16
+        {
             errorTot++;
-			errorMsg << _T("Physical Contact is ") << player.phys_cont << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Physical Contact is ") << player.phys_cont << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.kick_pwr != targetRate)
-		{
+        if (player.kick_pwr != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Kicking Power is ") << player.kick_pwr << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Kicking Power is ") << player.kick_pwr << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.exp_pwr != targetRate)
-		{
+        if (player.exp_pwr != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Explosive Power is ") << player.exp_pwr << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Explosive Power is ") << player.exp_pwr << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.ball_ctrl != targetRate)
-		{
+        if (player.ball_ctrl != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Ball Control is ") << player.ball_ctrl << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Ball Control is ") << player.ball_ctrl << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.ball_win != targetRate)
-		{
+        if (player.ball_win != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Ball winning is ") << player.ball_win << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Ball winning is ") << player.ball_win << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.jump != targetRate)
-		{
+        if (player.jump != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Jump is ") << player.jump << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Jump is ") << player.jump << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.cover != targetRate)
-		{
+        if (player.cover != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Coverage is ") << player.cover << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Coverage is ") << player.cover << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.place_kick != targetRate)
-		{
+        if (player.place_kick != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Place Kicking is ") << player.place_kick << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Place Kicking is ") << player.place_kick << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.stamina != targetRate3)
-		{
+        if (player.stamina != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Stamina is ") << player.stamina << _T(", should be ") << targetRate3 << _T("; ");
+            errorMsg << _T("Stamina is ") << player.stamina << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.speed != targetRate)
-		{
+        if (player.speed != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Speed is ") << player.speed << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Speed is ") << player.speed << _T(", should be ") << targetRate << _T("; ");
         }
-        if(player.atk > targetRate)
-		{
+        if (player.atk > targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Attacking Prowess is ") << player.atk << _T(", should be ") << targetRate << _T(" or less; ");
+            errorMsg << _T("Attacking Prowess is ") << player.atk << _T(", should be ") << targetRate << _T(" or less; ");
         }
-        if(player.def > targetRate2)
-		{
+        if (player.def > targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Defensive Prowess is ") << player.def << _T(", should be ") << targetRate2 << _T(" or less; ");
+            errorMsg << _T("Defensive Prowess is ") << player.def << _T(", should be ") << targetRate << _T(" or less; ");
         }
-		if(pesVersion>19 && player.tight_pos != targetRate)
-		{
+        if (pesVersion > 19 && player.tight_pos != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Tight Possession is ") << player.tight_pos << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Tight Possession is ") << player.tight_pos << _T(", should be ") << targetRate << _T("; ");
         }
-		if(pesVersion>19 && player.aggres != targetRate)
-		{
+        if (pesVersion > 19 && player.aggres != targetRate)
+        {
             errorTot++;
-			errorMsg << _T("Aggression is ") << player.aggres << _T(", should be ") << targetRate << _T("; ");
+            errorMsg << _T("Aggression is ") << player.aggres << _T(", should be ") << targetRate << _T("; ");
         }
-		if(errorMsg.rdbuf()->in_avail())
-		{
-			errorMsg << _T("\r\n");
-			msgOut+=_T("\t");
-			msgOut+=errorMsg.str();
-		}
+        if (errorMsg.rdbuf()->in_avail())
+        {
+            errorMsg << _T("\r\n");
+            msgOut += _T("\t");
+            msgOut += errorMsg.str();
+        }
 
-        if (suggestionMsg.rdbuf()->in_avail())
+        if (suggestionMsg.rdbuf()->in_avail() && useSuggestions)
         {
             suggestionMsg << _T("\r\n");
             msgOut += _T("\t");
             msgOut += suggestionMsg.str();
         }
-	}
-	//Team level errors
-	int diff;
+    }
+    //Team level errors
+    int diff;
     tstringstream errorMsg;
-	tstringstream suggestionMsg;
+    tstringstream suggestionMsg;
     //Check heights
-    if(!usingPurple) //Using Blue height system
+    if (!usingPurple) //Using Blue height system
     {
-		msgOut+=_T("Using Blue height system\r\n");
+        msgOut += _T("Using Blue height system\r\n");
         if (diff = blueColossal - numColossal)
         {
             if (diff > 0)
@@ -887,11 +857,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-            errorMsg << _T("Has ") << numColossal << _T("/") << blueColossal<< _T(" ") << heightColossal << _T("cm players; ");
+            errorMsg << _T("Has ") << numColossal << _T("/") << blueColossal << _T(" ") << heightColossal << _T("cm players; ");
         }
-        if(diff = blueGiant - numGiant)
+        if (diff = blueGiant - numGiant)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -899,11 +869,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numGiant << _T("/") << blueGiant << _T(" ") << heightGiant << _T("cm players; ");
+            errorMsg << _T("Has ") << numGiant << _T("/") << blueGiant << _T(" ") << heightGiant << _T("cm players; ");
         }
-        if(diff = blueTall - numTall)
+        if (diff = blueTall - numTall)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -911,11 +881,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numTall << _T("/") << blueTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
+            errorMsg << _T("Has ") << numTall << _T("/") << blueTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
         }
-        if(diff = blueMid - numMid)
+        if (diff = blueMid - numMid)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -923,11 +893,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numMid << _T("/") << blueMid << _T(" ") << heightMid << _T("cm players; ");
+            errorMsg << _T("Has ") << numMid << _T("/") << blueMid << _T(" ") << heightMid << _T("cm players; ");
         }
-        if(diff = blueManlet - numManlet)
+        if (diff = blueManlet - numManlet)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -935,12 +905,12 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numManlet << _T("/") << blueManlet << _T(" ") << heightManlet << _T("cm players; ");
+            errorMsg << _T("Has ") << numManlet << _T("/") << blueManlet << _T(" ") << heightManlet << _T("cm players; ");
         }
     }
     else //Using purple height system
     {
-		msgOut+=_T("Using Purple height system\r\n");
+        msgOut += _T("Using Purple height system\r\n");
         if (diff = purpleColossal - numColossal)
         {
             if (diff > 0)
@@ -954,7 +924,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             errorTot += diff;
             errorMsg << _T("Has ") << numColossal << _T("/") << purpleColossal << _T(" ") << heightColossal << _T("cm players; ");
         }
-        if(diff = purpleGiant - numGiant)
+        if (diff = purpleGiant - numGiant)
         {
             if (diff > 0)
             {
@@ -965,11 +935,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 errorTot -= diff;
             }
             errorTot += diff;
-			errorMsg << _T("Has ") << numGiant << _T("/") << purpleGiant << _T(" ") << heightGiant << _T("cm players; ");
+            errorMsg << _T("Has ") << numGiant << _T("/") << purpleGiant << _T(" ") << heightGiant << _T("cm players; ");
         }
-        if(diff = purpleTall - numTall)
+        if (diff = purpleTall - numTall)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -977,11 +947,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numTall << _T("/") << purpleTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
+            errorMsg << _T("Has ") << numTall << _T("/") << purpleTall << _T(" ") << heightTall << _T("/") << heightTallGK << _T("cm players; ");
         }
-        if(diff = purpleMid - numMid)
+        if (diff = purpleMid - numMid)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -989,11 +959,11 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numMid << _T("/") << purpleMid << _T(" ") << heightMid << _T("cm players; ");
+            errorMsg << _T("Has ") << numMid << _T("/") << purpleMid << _T(" ") << heightMid << _T("cm players; ");
         }
-        if(diff = purpleManlet - numManlet)
+        if (diff = purpleManlet - numManlet)
         {
-            if(diff>0)
+            if (diff > 0)
             {
                 errorTot += diff;
             }
@@ -1001,7 +971,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             {
                 errorTot -= diff;
             }
-			errorMsg << _T("Has ") << numManlet << _T("/") << purpleManlet << _T(" ") << heightManlet << _T("cm players; ");
+            errorMsg << _T("Has ") << numManlet << _T("/") << purpleManlet << _T(" ") << heightManlet << _T("cm players; ");
         }
         std::list<player_entry>::iterator it;
         for (it = manlets_without_bonus.begin(); it != manlets_without_bonus.end(); ++it) {
@@ -1009,49 +979,50 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
             suggestionMsg << _T("[Player ") << it->name << _T(" is a manlet and can have ") << regRate + manletBonus << _T(" rating]; \r\n");
         }
     }
-	if(errorMsg.rdbuf()->in_avail())
-	{
-		errorMsg << _T("\r\n");
-		msgOut+=errorMsg.str();
-		errorMsg.clear();
-		errorMsg.str(tstring());
-	}
-    
+    if (errorMsg.rdbuf()->in_avail())
+    {
+        errorMsg << _T("\r\n");
+        msgOut += errorMsg.str();
+        errorMsg.clear();
+        errorMsg.str(tstring());
+    }
+
     //Check ability stats
-    if(numReg != (23-reqNumSilver-reqNumGold))
+    if (numReg != (23 - reqNumSilver - reqNumGold))
     {
         errorTot++;
-        errorMsg << _T("Number of Regular players is ") << numReg << _T(", should be ") << 23-reqNumSilver-reqNumGold << _T("; ");
+        errorMsg << _T("Number of Regular players is ") << numReg << _T(", should be ") << 23 - reqNumSilver - reqNumGold << _T("; ");
     }
-    if(numSilver != reqNumSilver)
+    if (numSilver != reqNumSilver)
     {
         errorTot++;
         errorMsg << _T("Number of Silver medals is ") << numSilver << _T(", should be ") << reqNumSilver << _T("; ");
     }
-    if(numGold != reqNumGold)
+    if (numGold != reqNumGold)
     {
         errorTot++;
         errorMsg << _T("Number of Gold medals is ") << numGold << _T(", should be ") << reqNumGold << _T("; ");
     }
-	if(errorMsg.rdbuf()->in_avail())
-		errorMsg << _T("\r\n");
-	errorMsg << _T("\r\nErrors: ") << errorTot << _T("\r\n\r\n");
-	msgOut+=errorMsg.str();
+    if (errorMsg.rdbuf()->in_avail())
+        errorMsg << _T("\r\n");
+    errorMsg << _T("\r\nErrors: ") << errorTot << _T("\r\n\r\n");
+    msgOut += errorMsg.str();
 
-    if (!captainHasCard) {
-        suggestionTot++;        
+    if (!captainHasCard && useSuggestions) {
+        suggestionTot++;
         suggestionMsg << _T("[Captain does not have free captain card]; ");
     }
-    if (suggestionMsg.rdbuf()->in_avail())
-        suggestionMsg << _T("\r\n");
-    suggestionMsg << _T("\r\Suggestions: ") << suggestionTot << _T("\r\n");
-    msgOut += suggestionMsg.str();
+    if (useSuggestions) {
+        suggestionMsg << _T("\r\Suggestions: ") << suggestionTot << _T("\r\n");
+        msgOut += suggestionMsg.str();
+    }
+    
 
-	SetWindowText(GetDlgItem(hAatfbox, IDT_AATFOUT), msgOut.c_str());
-	if(errorTot)
-		//SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("It's all so tiresome."));
+    SetWindowText(GetDlgItem(hAatfbox, IDT_AATFOUT), msgOut.c_str());
+    if (errorTot)
+        //SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("It's all so tiresome."));
         SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM)_T("It's all fucked."));
-	else
-		//SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("You have received one (1) Official R-word Pass."));
+    else
+        //SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM) _T("You have received one (1) Official R-word Pass."));
         SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM)_T("Perfect, blaze."));
 }

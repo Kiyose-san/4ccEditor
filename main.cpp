@@ -945,9 +945,20 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					{
 						update_tables();
 						ShowWindow(ghAatfbox, SW_SHOW);
-						aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players);
+						aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players,false);
 					}
 					else MessageBox(H,_T("Please select a team to check."),NULL,MB_ICONWARNING);
+				}
+				break;
+				case IDM_DATA_AATFC_SUG: //Run AATF on currently-selected team and show results in a dialog box with suggestions
+				{
+					if (gn_teamsel > -1)
+					{
+						update_tables();
+						ShowWindow(ghAatfbox, SW_SHOW);
+						aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players,true);
+					}
+					else MessageBox(H, _T("Please select a team to check."), NULL, MB_ICONWARNING);
 				}
 				break;
 				case IDM_DATA_AATFS: //Run AATF on teams selected from a list
@@ -956,6 +967,15 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					{
 						update_tables();
 						DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_AATF_SEL), H, aatf_sel_dlg_proc);
+					}
+				}
+				break;
+				case IDM_DATA_AATFS_SUG: //Run AATF on teams selected from a list with suggestions
+				{
+					if (ghdescriptor)
+					{
+						update_tables();
+						DialogBox(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_AATF_SEL), H, aatf_sel_dlg_proc_sug);
 					}
 				}
 				break;
@@ -5604,68 +5624,6 @@ BOOL CALLBACK bogloDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam
 	return TRUE;
 }
 
-			//If "Glove: set like boot IDs" is set
-			if (SendDlgItemMessage(hwnd, IDT_GLOVE_OPT2, BM_GETCHECK, 0, 0)) {
-				//Loop through each player
-				playerCounter = 1;
-				for (int ii = 0; ii < gnum_players; ii++)
-				{
-					if (playerCounter >= 24) break;
-					if (gplayers[ii].id == team * 100 + playerCounter)
-					{
-						//Set glove ID as boot ID
-						gplayers[ii].glove_id = gplayers[ii].boot_id;
-						playerCounter++;
-					}
-				}
-			}
-
-			//If "Glove: set all to the same ID" is set
-			if (SendDlgItemMessage(hwnd, IDT_GLOVE_OPT3, BM_GETCHECK, 0, 0)) {
-
-				//Get glove ID:
-				SendDlgItemMessage(hwnd, IDT_GLOVE_ID, WM_GETTEXT, 18, (LPARAM)buffer);
-				gloveID = _wtoi(buffer);
-
-				//Loop through each player
-				playerCounter = 1;
-				for (int ii = 0; ii < gnum_players; ii++)
-				{
-					if (playerCounter >= 24) break;
-					if (gplayers[ii].id == team * 100 + playerCounter)
-					{
-						//Set glove ID
-						gplayers[ii].glove_id = gloveID;
-						playerCounter++;
-					}
-				}
-			}
-
-			//Refresh display of currently selected player
-			show_player_info(gn_playind[gn_listsel]);
-
-			SendMessage(hwnd, WM_CLOSE, 0, 0);
-		}
-		break;
-
-		case IDC_CANCEL: //If the "Close" button is pressed,
-		{
-			SendMessage(hwnd, WM_CLOSE, 0, 0);
-		}
-		break;
-		}
-		break;
-
-	case WM_CLOSE:
-		DestroyIcon((HICON)GetClassLongPtr(hwnd, GCLP_HICONSM)); //Destroy the allocated icon to free the GDI resource
-		SetClassLongPtr(hwnd, GCLP_HICONSM, NULL); //Set icon pointer to NULL
-		ghw_stat = NULL;
-		DestroyWindow(hwnd);
-	default:
-		return FALSE;
-	}
-	return TRUE;
-}
 
 BOOL CALLBACK aatf_sing_dlg_proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
@@ -5692,7 +5650,7 @@ BOOL CALLBACK aatf_mult_dlg_proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
     {
 		case WM_INITDIALOG:
 		{
-			aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players);
+			aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players,false);
 			SetFocus(GetDlgItem(hwnd,IDB_AATFOK));
 		}
 		break;
@@ -5708,6 +5666,30 @@ BOOL CALLBACK aatf_mult_dlg_proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
             return FALSE;
     }
     return TRUE;
+}
+
+BOOL CALLBACK aatf_mult_dlg_proc_sug(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	switch (Message)
+	{
+	case WM_INITDIALOG:
+	{
+		aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players, true);
+		SetFocus(GetDlgItem(hwnd, IDB_AATFOK));
+	}
+	break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDB_AATFOK:
+			EndDialog(hwnd, IDB_AATFOK);
+			break;
+		}
+		break;
+	default:
+		return FALSE;
+	}
+	return TRUE;
 }
 
 
@@ -5757,6 +5739,54 @@ BOOL CALLBACK aatf_sel_dlg_proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM l
             return FALSE;
     }
     return TRUE;
+}
+
+BOOL CALLBACK aatf_sel_dlg_proc_sug(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam)
+{
+	switch (Message)
+	{
+	case WM_INITDIALOG:
+	{
+		for (int ii = 0; ii < gnum_teams; ii++)
+		{
+			if (gteams[ii].b_show)
+			{
+				SendDlgItemMessage(hwnd, IDC_AATF_SEL, LB_ADDSTRING, 0, (LPARAM)gteams[ii].name);
+			}
+		}
+	}
+	break;
+	case WM_COMMAND:
+		switch (LOWORD(wParam))
+		{
+		case IDC_OK:
+		{
+			ShowWindow(hwnd, SW_HIDE);
+			int selCount = SendDlgItemMessage(hwnd, IDC_AATF_SEL, LB_GETSELCOUNT, 0, 0);
+			int* selIndices = new int[selCount];
+			//int *teamIndices = new int[selCount];
+			int teamInd;
+			SendDlgItemMessage(hwnd, IDC_AATF_SEL, LB_GETSELITEMS, (WPARAM)selCount, (LPARAM)selIndices);
+			for (int ii = 0; ii < selCount; ii++)
+			{
+				teamInd = gn_teamCbIndToArray[selIndices[ii]];
+				DialogBoxParam(GetModuleHandle(NULL), MAKEINTRESOURCE(IDD_AATF), hwnd, aatf_mult_dlg_proc_sug, teamInd);
+			}
+
+			delete[] selIndices;
+			//delete [] teamIndices;
+			EndDialog(hwnd, IDC_OK);
+		}
+		break;
+		case IDC_CANCEL:
+			EndDialog(hwnd, IDC_CANCEL);
+			break;
+		}
+		break;
+	default:
+		return FALSE;
+	}
+	return TRUE;
 }
 
 
