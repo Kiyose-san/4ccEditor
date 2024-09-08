@@ -1,0 +1,8 @@
+Debug/
+Release/
+lib/
+.vs/
+4ccEditor.sln
+4ccEditor.vcxproj.user
+UpgradeLog.htm
+resource.aps
