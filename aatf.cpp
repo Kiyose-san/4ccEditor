@@ -3,6 +3,7 @@
 #include "editor.h"
 #include "resource.h"
 #include <list>
+#include "aatf.h"
 #ifndef UNICODE  
 typedef std::string tstring;
 typedef std::stringstream tstringstream;
@@ -147,7 +148,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         rating = max(player.clearing, rating);
         rating = max(player.reflex, rating);
         rating = max(player.body_ctrl, rating);
-        if (pesVersion != 16) rating = max(player.phys_cont, rating); //Not in 16
+        if(pesVersion>16) rating = max(player.phys_cont, rating); //Not in 16
         rating = max(player.kick_pwr, rating);
         rating = max(player.exp_pwr, rating);
         rating = max(player.ball_ctrl, rating);

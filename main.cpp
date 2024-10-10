@@ -3,6 +3,7 @@
 #include "resource.h"
 #include "editor.h"
 #include "window.h"
+#include "aatf.h"
 #include <string>
 #include <Windows.h>
 #pragma comment(lib, "Winmm.lib")
@@ -35,7 +36,7 @@ BOOL CALLBACK scale_children(HWND,LPARAM);
 BOOL CALLBACK draw_children(HWND,LPARAM);
 */
 int loadDLL();
-void DoFileOpen(HWND, TCHAR* = NULL);
+int DoFileOpen(HWND, int, TCHAR* = NULL);
 void DoFileSave(HWND);
 void data_handler(const TCHAR *);
 void save_handler(const TCHAR *);
@@ -162,7 +163,7 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	ghw_main = CreateWindowEx(
 		0,
 		wc.lpszClassName,
-		_T("4ccEditor VGL 23 Edition (Version A)"),
+		_T("4ccEditor VGL 23 Edition (Version B)"),
 		WS_OVERLAPPEDWINDOW,
 		20, 20, 1120+144, 700,
 		NULL, NULL, ghinst, NULL);
@@ -671,35 +672,45 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 			PostQuitMessage(0);
 		break;
 		case WM_COMMAND:
+			wchar_t buffer[4];
+			int ret;
+			int prevPesVersion;
+			memset(buffer, 0, sizeof(buffer));
 			switch(LOWORD(W))
 			{
 				case ID_FILE_EXIT:
 					PostMessage(H, WM_CLOSE, 0, 0);
 				break;
 				case ID_FILE_OPEN_16_EN:
-					giPesVersion = 16;
-					DoFileOpen(H, _T("Open PES16 EDIT file"));
+					prevPesVersion = giPesVersion;
+					ret = DoFileOpen(H, 16, _T("Open PES16 EDIT file"));
+					if(ret) giPesVersion = prevPesVersion;
 				break;
 				case ID_FILE_OPEN_17_EN:
-					giPesVersion = 17;
-					DoFileOpen(H, _T("Open PES17 EDIT file"));
+					prevPesVersion = giPesVersion;
+					ret = DoFileOpen(H, 17, _T("Open PES17 EDIT file"));
+					if (ret) giPesVersion = prevPesVersion;
 				break;
 				case ID_FILE_OPEN_18_EN:
-					giPesVersion = 18;
-					DoFileOpen(H, _T("Open PES18 EDIT file"));
+					prevPesVersion = giPesVersion;
+					ret = DoFileOpen(H, 18, _T("Open PES18 EDIT file"));
+					if (ret) giPesVersion = prevPesVersion;
 				break;
 				case ID_FILE_OPEN_19_EN:
-					giPesVersion = 19;
-					DoFileOpen(H, _T("Open PES19 EDIT file"));
+					prevPesVersion = giPesVersion;
+					ret = DoFileOpen(H, 19, _T("Open PES19 EDIT file"));
+					if (ret) giPesVersion = prevPesVersion;
 				break;
 				case ID_FILE_OPEN_20_EN:
-					giPesVersion = 20;
-					DoFileOpen(H, _T("Open PES20 EDIT file"));
+					prevPesVersion = giPesVersion;
+					ret = DoFileOpen(H, 20, _T("Open PES20 EDIT file"));
+					if (ret) giPesVersion = prevPesVersion;
 				break;
 				case ID_FILE_OPEN_EN:
 				case ID_FILE_OPEN_21_EN:
-					giPesVersion = 21;
-					DoFileOpen(H, _T("Open PES21 EDIT file"));
+					prevPesVersion = giPesVersion;
+					ret = DoFileOpen(H, 21, _T("Open PES21 EDIT file"));
+					if (ret) giPesVersion = prevPesVersion;
 				break;
 				case ID_FILE_SAVE_EN:
 					if(ghdescriptor)
@@ -851,13 +862,19 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
-						int ii;
-						for(ii=IDT_ABIL_ATKP;ii<gi_lastAbility;ii+=2)
-							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("99"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)_T("8"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)_T("2"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)_T("4"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)_T("4"));
+						_itow_s(goldRate, buffer, 3, 10);
+						for(int ii=IDT_ABIL_ATKP;ii<gi_lastAbility;ii+=2)
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(goldForm, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(goldIR, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+						
+						_itow_s(goldWeakFoot, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
 					}
 				}
 				break;
@@ -882,13 +899,19 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
-						int ii;
-						for(ii=IDT_ABIL_ATKP;ii<gi_lastAbility;ii+=2)
-							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("88"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)_T("8"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)_T("2"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)_T("4"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)_T("4"));
+						_itow_s(silverRate, buffer, 3, 10);
+						for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(silverForm, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(silverIR, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(silverWeakFoot, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
 					}
 				}
 				break;
@@ -914,14 +937,22 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
-						int ii;
-						for(ii=IDT_ABIL_ATKP;ii<gi_lastAbility;ii+=2)
-							if(ii==IDT_ABIL_DEFP || ii==IDT_ABIL_BWIN || ii==IDT_ABIL_EXPL) //Nerf Defensive Prowess, Ball winning and Explosive power to 72
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
-							else
-								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)_T("4"));
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)_T("1"));
+							//if(ii==IDT_ABIL_DEFP || ii==IDT_ABIL_BWIN || ii==IDT_ABIL_EXPL) //Nerf Defensive Prowess, Ball winning and Explosive power to 72
+							//	SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
+
+						_itow_s(regRate, buffer, 3, 10);
+						for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(regForm, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(regIR, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(regWeakFoot, buffer, 3, 10);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
 					}
 				}
 				break;
@@ -1112,7 +1143,7 @@ int loadDLL()
 }
 
 //Launch an Open File dialog box and attempt to open the selected file
-void DoFileOpen(HWND hwnd, TCHAR* pcs_title)
+int DoFileOpen(HWND hwnd, int pesVersion, TCHAR* pcs_title)
 {
 	OPENFILENAME ofn;
 	TCHAR cs_file_name[MAX_PATH] = _T("");
@@ -1133,6 +1164,7 @@ void DoFileOpen(HWND hwnd, TCHAR* pcs_title)
 	if(GetOpenFileName(&ofn))
 	{
 		gb_firstsave = true;
+		giPesVersion = pesVersion;
 		__try
 		{
 			data_handler(cs_file_name);
@@ -1158,9 +1190,11 @@ void DoFileOpen(HWND hwnd, TCHAR* pcs_title)
 			}
 			SendDlgItemMessage(ghw_main, IDC_NAME_LIST, LVM_DELETEALLITEMS, 0, 0);
 			SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_RESETCONTENT, 0, 0);
-			return;
+			return 1;
 		}
+		return 0;
 	}
+	return 2;
 }
 
 //Launch a Save File dialog box and save the PES EDIT data to the chosen location
@@ -5478,148 +5512,155 @@ BOOL CALLBACK bogloDlgProc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM lParam
 		}
 		break;
 
-	case WM_COMMAND:
-
-		switch (HIWORD(wParam))
+		case WM_COMMAND:
 		{
-		case EN_CHANGE:
-			if (LOWORD(wParam) == IDT_BOOT_START)
+			switch (HIWORD(wParam))
 			{
-				TCHAR buffer[20];
-				INT bootID;
-				GetDlgItemText(hwnd, IDT_BOOT_START, buffer,20);
-				bootID = _tstoi(buffer) + 22;
-				wsprintfW(buffer, L"%d", bootID);
-				SetDlgItemText(hwnd, IDT_BOOT_END, buffer);
+				case EN_CHANGE:
+					if (LOWORD(wParam) == IDT_BOOT_START)
+					{
+						TCHAR buffer[20];
+						INT bootID;
+						GetDlgItemText(hwnd, IDT_BOOT_START, buffer,20);
+						bootID = _tstoi(buffer) + 22;
+						wsprintfW(buffer, L"%d", bootID);
+						SetDlgItemText(hwnd, IDT_BOOT_END, buffer);
+					}
+					break;
+
 			}
-			break;
 
-		}
-
-		switch (LOWORD(wParam))
-		{
-		case IDC_OK: //If the "OK" button is pressed,
-		{
-			int bootID, gloveID, team, playerCounter;
-			player_export srcPlyrExport;
-			wchar_t buffer[18];
-
-			//Update current player entry
-			player_entry pe_current = get_form_player_info(gn_playind[gn_listsel]);
-			if (!(gplayers[gn_playind[gn_listsel]] == pe_current))
+			switch (LOWORD(wParam))
 			{
-				if (wcscmp(gplayers[gn_playind[gn_listsel]].name, pe_current.name))
-					pe_current.b_edit_player = true;
-				gplayers[gn_playind[gn_listsel]] = pe_current;
-			}
-
-			//Get current team ID:						
-			SendDlgItemMessage(ghw_main, IDT_TEAM_ID, WM_GETTEXT, 18, (LPARAM)buffer);
-			team = _wtoi(buffer);
-
-			//If "Boot: set incremental value" is set
-			if (SendDlgItemMessage(hwnd, IDT_BOOT_OPT2, BM_GETCHECK, 0, 0)) {
-
-				//Get starting boot:
-				SendDlgItemMessage(hwnd, IDT_BOOT_START, WM_GETTEXT, 18, (LPARAM)buffer);
-				bootID = _wtoi(buffer);
-
-				//Loop through each player
-				playerCounter = 1;
-				for (int ii = 0; ii < gnum_players; ii++)
+				case IDC_OK: //If the "OK" button is pressed,
 				{
-					//Stop if we updated 23 players
-					if (playerCounter >= 24) break;
-					if (gplayers[ii].id == team * 100 + playerCounter)
+					int bootID, gloveID, team, playerCounter;
+					player_export srcPlyrExport;
+					wchar_t buffer[18];
+
+					//Update current player entry
+					player_entry pe_current = get_form_player_info(gn_playind[gn_listsel]);
+					if (!(gplayers[gn_playind[gn_listsel]] == pe_current))
 					{
-						//Set boot ID
-						gplayers[ii].boot_id = bootID;
-						playerCounter++;
-						bootID++;
+						if (wcscmp(gplayers[gn_playind[gn_listsel]].name, pe_current.name))
+							pe_current.b_edit_player = true;
+						gplayers[gn_playind[gn_listsel]] = pe_current;
 					}
+
+					//Get current team ID:						
+					SendDlgItemMessage(ghw_main, IDT_TEAM_ID, WM_GETTEXT, 18, (LPARAM)buffer);
+					team = _wtoi(buffer);
+
+					//If "Boot: set incremental value" is set
+					if (SendDlgItemMessage(hwnd, IDT_BOOT_OPT2, BM_GETCHECK, 0, 0)) {
+
+						//Get starting boot:
+						SendDlgItemMessage(hwnd, IDT_BOOT_START, WM_GETTEXT, 18, (LPARAM)buffer);
+						bootID = _wtoi(buffer);
+
+						//Loop through each player
+						playerCounter = 1;
+						for (int ii = 0; ii < gnum_players; ii++)
+						{
+							//Stop if we updated 23 players
+							if (playerCounter >= 24) break;
+							if (gplayers[ii].id == team * 100 + playerCounter)
+							{
+								//Set boot ID
+								gplayers[ii].boot_id = bootID;
+								gplayers[ii].b_changed = true;
+								playerCounter++;
+								bootID++;
+							}
+						}
+					}
+
+					//If "Boot: set all to the same ID" is set
+					if (SendDlgItemMessage(hwnd, IDT_BOOT_OPT3, BM_GETCHECK, 0, 0)) {
+
+						//Get boot ID:
+						SendDlgItemMessage(hwnd, IDT_BOOT_ID, WM_GETTEXT, 18, (LPARAM)buffer);
+						bootID = _wtoi(buffer);
+
+						//Loop through each player
+						playerCounter = 1;
+						for (int ii = 0; ii < gnum_players; ii++)
+						{
+							if (playerCounter >= 24) break;
+							if (gplayers[ii].id == team * 100 + playerCounter)
+							{
+								//Set glove ID
+								gplayers[ii].boot_id = bootID;
+								gplayers[ii].b_changed = true;
+								playerCounter++;
+							}
+						}
+					}
+
+					//If "Glove: set like boot IDs" is set
+					if (SendDlgItemMessage(hwnd, IDT_GLOVE_OPT2, BM_GETCHECK, 0, 0)) {
+						//Loop through each player
+						playerCounter = 1;
+						for (int ii = 0; ii < gnum_players; ii++)
+						{
+							if (playerCounter >= 24) break;
+							if (gplayers[ii].id == team * 100 + playerCounter)
+							{
+								//Set glove ID as boot ID
+								gplayers[ii].glove_id = gplayers[ii].boot_id;
+								gplayers[ii].b_changed = true;
+								playerCounter++;
+							}
+						}
+					}
+
+					//If "Glove: set all to the same ID" is set
+					if (SendDlgItemMessage(hwnd, IDT_GLOVE_OPT3, BM_GETCHECK, 0, 0)) {
+
+						//Get glove ID:
+						SendDlgItemMessage(hwnd, IDT_GLOVE_ID, WM_GETTEXT, 18, (LPARAM)buffer);
+						gloveID = _wtoi(buffer);
+
+						//Loop through each player
+						playerCounter = 1;
+						for (int ii = 0; ii < gnum_players; ii++)
+						{
+							if (playerCounter >= 24) break;
+							if (gplayers[ii].id == team * 100 + playerCounter)
+							{
+								//Set glove ID
+								gplayers[ii].glove_id = gloveID;
+								gplayers[ii].b_changed = true;
+								playerCounter++;
+							}
+						}
+					}
+
+					//Refresh display of currently selected player
+					show_player_info(gn_playind[gn_listsel]);
+
+					SendMessage(hwnd, WM_CLOSE, 0, 0);
 				}
-			}
+				break;
 
-			//If "Boot: set all to the same ID" is set
-			if (SendDlgItemMessage(hwnd, IDT_BOOT_OPT3, BM_GETCHECK, 0, 0)) {
-
-				//Get boot ID:
-				SendDlgItemMessage(hwnd, IDT_BOOT_ID, WM_GETTEXT, 18, (LPARAM)buffer);
-				bootID = _wtoi(buffer);
-
-				//Loop through each player
-				playerCounter = 1;
-				for (int ii = 0; ii < gnum_players; ii++)
+				case IDC_CANCEL: //If the "Close" button is pressed,
 				{
-					if (playerCounter >= 24) break;
-					if (gplayers[ii].id == team * 100 + playerCounter)
-					{
-						//Set glove ID
-						gplayers[ii].boot_id = bootID;
-						playerCounter++;
-					}
+					SendMessage(hwnd, WM_CLOSE, 0, 0);
 				}
+				break;
 			}
-
-			//If "Glove: set like boot IDs" is set
-			if (SendDlgItemMessage(hwnd, IDT_GLOVE_OPT2, BM_GETCHECK, 0, 0)) {
-				//Loop through each player
-				playerCounter = 1;
-				for (int ii = 0; ii < gnum_players; ii++)
-				{
-					if (playerCounter >= 24) break;
-					if (gplayers[ii].id == team * 100 + playerCounter)
-					{
-						//Set glove ID as boot ID
-						gplayers[ii].glove_id = gplayers[ii].boot_id;
-						playerCounter++;
-					}
-				}
-			}
-
-			//If "Glove: set all to the same ID" is set
-			if (SendDlgItemMessage(hwnd, IDT_GLOVE_OPT3, BM_GETCHECK, 0, 0)) {
-
-				//Get glove ID:
-				SendDlgItemMessage(hwnd, IDT_GLOVE_ID, WM_GETTEXT, 18, (LPARAM)buffer);
-				gloveID = _wtoi(buffer);
-
-				//Loop through each player
-				playerCounter = 1;
-				for (int ii = 0; ii < gnum_players; ii++)
-				{
-					if (playerCounter >= 24) break;
-					if (gplayers[ii].id == team * 100 + playerCounter)
-					{
-						//Set glove ID
-						gplayers[ii].glove_id = gloveID;
-						playerCounter++;
-					}
-				}
-			}
-
-			//Refresh display of currently selected player
-			show_player_info(gn_playind[gn_listsel]);
-
-			SendMessage(hwnd, WM_CLOSE, 0, 0);
 		}
 		break;
 
-		case IDC_CANCEL: //If the "Close" button is pressed,
-		{
-			SendMessage(hwnd, WM_CLOSE, 0, 0);
-		}
-		break;
-		}
+		case WM_CLOSE:
+			DestroyIcon((HICON)GetClassLongPtr(hwnd, GCLP_HICONSM)); //Destroy the allocated icon to free the GDI resource
+			SetClassLongPtr(hwnd, GCLP_HICONSM, NULL); //Set icon pointer to NULL
+			ghw_stat = NULL;
+			DestroyWindow(hwnd);
 		break;
 
-	case WM_CLOSE:
-		DestroyIcon((HICON)GetClassLongPtr(hwnd, GCLP_HICONSM)); //Destroy the allocated icon to free the GDI resource
-		SetClassLongPtr(hwnd, GCLP_HICONSM, NULL); //Set icon pointer to NULL
-		ghw_stat = NULL;
-		DestroyWindow(hwnd);
-	default:
-		return FALSE;
+		default:
+			return FALSE;
 	}
 	return TRUE;
 }

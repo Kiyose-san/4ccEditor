@@ -46,7 +46,7 @@ struct player_export
 	unsigned char injury; //Injury Resistance 
 	bool b_edit_basicset; //Whether the player's basic settings are changed
 	unsigned char body_ctrl; //Body Control 
-	unsigned char phys_cont; //Physical Contact 
+	unsigned char phys_cont; //Physical Contact				(17+)
 	unsigned char kick_pwr; //Kicking Power
 	unsigned char exp_pwr; //Explosive Power 
 	unsigned char mo_armd; //Motion: Arm Movement (dribbling) 
@@ -676,3 +676,5 @@ void save_comparator(HWND, int, player_entry*, int, team_entry*, int, TCHAR*, vo
 //data_util.cpp functions
 int read_data(int, int, int&, FileDescriptorNew*);
 void write_data(int, int, int, int&, FileDescriptorNew*);
+int read_dataOld(int, int, int&, FileDescriptorOld*);
+void write_dataOld(int, int, int, int&, FileDescriptorOld*);
