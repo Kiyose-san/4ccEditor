@@ -12,6 +12,82 @@ typedef std::wstring tstring;
 typedef std::wstringstream tstringstream;
 #endif
 
+//Settings
+int manletBonus = 0;
+int silverManletBonus = 0;
+int goldGiantPen = 0;
+int silverGiantPen = 0;
+int goldRate = 99;
+int silverRate = 88;
+int regRate = 77;
+int gkRate = 77;
+int reqNumGold = 2;
+int reqNumSilver = 3;
+
+int goldForm = 8;
+int silverForm = 8;
+int regForm = 4;
+
+int goldIR = 2; //Injury resistence
+int silverIR = 2;
+int regIR = 1;
+
+int goldWeakFoot = 4;
+int silverWeakFoot = 4;
+int regWeakFoot = 2;
+
+int gkSkillCards = 3;
+int regSkillCards = 3;
+int silverSkillCards = 4;
+int goldSkillCards = 5;
+
+int gkTrickCards = 99;
+int regTrickCards = 99;
+int silverTrickCards = 99;
+int goldTrickCards = 99;
+
+int gkCOM = 0;
+int regCOM = 0;
+int silverCOM = 1;
+int goldCOM = 1;
+
+int blueColossal = 0;
+int blueGiant = 0;
+int blueTall = 0;
+int blueMid = 0;
+int blueManlet = 0;
+
+int purpleColossal = 0;
+int purpleGiant = 0;
+int purpleTall = 10;
+int purpleMid = 7;
+int purpleManlet = 6;
+
+int heightColossal = 210;
+int heightGiant = 194;
+int heightTall = 185;
+int heightTallGK = 189;
+int heightMid = 180;
+int heightManlet = 175;
+
+int numGK = 0;
+//Count of player ratings
+int numReg = 0;
+int numSilver = 0;
+int numGold = 0;
+//Count of height brackets
+int numColossal = 0;
+int numGiant = 0;
+int numTall = 0;
+int numMid = 0;
+int numManlet = 0;
+
+
+int goldA = 2;
+int silverA = 2;
+int regA = 2;
+int manletA = 3;
+
 void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplayers, team_entry* gteams, int gnum_players, bool useSuggestions)
 {
     player_entry player;
@@ -21,79 +97,8 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
     msgOut += gteams[teamSel].name;
     msgOut += _T("\r\n");
 
-    //Settings
-    int manletBonus = 0;
-    int silverManletBonus = 0;
-    int goldGiantPen = 0;
-    int silverGiantPen = 0;
-    int goldRate = 99;
-    int silverRate = 88;
-    int regRate = 77;
-    int gkRate = 77;
-    int reqNumGold = 2;
-    int reqNumSilver = 3;
-
-    int goldForm = 8;
-    int silverForm = 8;
-    int regForm = 4;
-
-    int goldIR = 2; //Injury resistence
-    int silverIR = 2;
-    int regIR = 1;
-
-    int gkSkillCards = 3;
-    int regSkillCards = 3;
-    int silverSkillCards = 4;
-    int goldSkillCards = 5;
-
-    int gkTrickCards = 99;
-    int regTrickCards = 99;
-    int silverTrickCards = 99;
-    int goldTrickCards = 99;
-
-    int gkCOM = 0;
-    int regCOM = 0;
-    int silverCOM = 1;
-    int goldCOM = 1;
-
-    int blueColossal = 0;
-    int blueGiant = 0;
-    int blueTall = 0;
-    int blueMid = 0;
-    int blueManlet = 0;
-
-    int purpleColossal = 0;
-    int purpleGiant = 0;
-    int purpleTall = 10;
-    int purpleMid = 7;
-    int purpleManlet = 6;
-
-    int heightColossal = 210;
-    int heightGiant = 194;
-    int heightTall = 185;
-    int heightTallGK = 189;
-    int heightMid = 180;
-    int heightManlet = 175;
-
-    int numGK = 0;
-    //Count of player ratings
-    int numReg = 0;
-    int numSilver = 0;
-    int numGold = 0;
-    //Count of height brackets
-    int numColossal = 0;
-    int numGiant = 0;
-    int numTall = 0;
-    int numMid = 0;
-    int numManlet = 0;
-    bool usingPurple = true;
-
-    int goldA = 2;
-    int silverA = 2;
-    int regA = 2;
-    int manletA = 3;
-
     bool isManlet = false;
+    bool usingPurple = true;
 
     numGK = 0;
     //Player ratings
@@ -136,6 +141,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
         int cardMod = 0;
         int cardLimit = 0;
         bool hasTrick = false;
+        int weakFoot = 0;
         int targetRate = 0, targetRate2 = 0;
         int rating = player.drib;
         rating = max(player.gk, rating);
@@ -343,6 +349,8 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
                 targetRate = gkRate;
                 targetRate2 = gkRate;
             }
+
+            weakFoot = regWeakFoot;
 
             if (player.height > heightManlet)
             {
