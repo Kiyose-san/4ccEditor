@@ -83,4 +83,15 @@
   <ItemGroup>
     <Manifest Include="GdiScaling.manifest" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="4cc_med.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="4cc_sm.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="vgl_logo.bmp">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

@@ -62,4 +62,3 @@ extern int heightTall;
 extern int heightTallGK;
 extern int heightMid;
 extern int heightManlet;
-

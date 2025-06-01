@@ -168,19 +168,11 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	int retval = loadDLL();
 	if(retval) return retval;
 
-	ghw_main = CreateWindowEx(
-		0,
-		wc.lpszClassName,
-		_T("4ccEditor Autumn 24 Edition (Version C)"),
-		WS_OVERLAPPEDWINDOW,
-		20, 20, 1120+144, 700,
-		NULL, NULL, ghinst, NULL);
-
 	if (vglmode) {
 		ghw_main = CreateWindowEx(
 			0,
 			wc.lpszClassName,
-			_T("4ccEditor VGL 24 Edition (Version A)"),
+			_T("4ccEditor VGL 24 Edition (Version A beta)"),
 			WS_OVERLAPPEDWINDOW,
 			20, 20, 1120 + 144, 700,
 			NULL, NULL, ghinst, NULL);
@@ -1014,7 +1006,13 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					{
 						update_tables();
 						ShowWindow(ghAatfbox, SW_SHOW);
-						aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players,false);
+						if (vglmode) {
+							aatf_single_vgl(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players, false);
+						}
+						else {
+							aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players);
+						}
+						
 					}
 					else MessageBox(H,_T("Please select a team to check."),NULL,MB_ICONWARNING);
 				}
@@ -1025,7 +1023,13 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					{
 						update_tables();
 						ShowWindow(ghAatfbox, SW_SHOW);
-						aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players,true);
+						if (vglmode) {
+							aatf_single_vgl(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players, true);
+						}
+						else {
+							aatf_single(ghAatfbox, giPesVersion, gn_teamsel, gplayers, gteams, gnum_players);
+						}
+						
 					}
 					else MessageBox(H, _T("Please select a team to check."), NULL, MB_ICONWARNING);
 				}
@@ -5477,7 +5481,13 @@ BOOL CALLBACK aatf_mult_dlg_proc(HWND hwnd, UINT Message, WPARAM wParam, LPARAM 
     {
 		case WM_INITDIALOG:
 		{
-			aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players,false);
+			if (vglmode) {
+				aatf_single_vgl(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players, false);
+			}
+			else {
+				aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players);
+			}
+			
 			SetFocus(GetDlgItem(hwnd,IDB_AATFOK));
 		}
 		break;
@@ -5501,7 +5511,13 @@ BOOL CALLBACK aatf_mult_dlg_proc_sug(HWND hwnd, UINT Message, WPARAM wParam, LPA
 	{
 	case WM_INITDIALOG:
 	{
-		aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players, true);
+		if (vglmode) {
+			aatf_single_vgl(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players, true);
+		}
+		else {
+			aatf_single(hwnd, giPesVersion, lParam, gplayers, gteams, gnum_players);
+		}
+		
 		SetFocus(GetDlgItem(hwnd, IDB_AATFOK));
 	}
 	break;
