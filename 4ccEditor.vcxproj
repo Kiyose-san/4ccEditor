@@ -15,11 +15,12 @@
     <ProjectGuid>{ACD373D6-744B-4ADF-8E7B-41492B847A4B}</ProjectGuid>
     <RootNamespace>My4ccEditor</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
-    <PlatformToolset>v143</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
@@ -95,11 +96,13 @@
     <ClCompile Include="crypt.cpp" />
     <ClCompile Include="data_util.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="menu_lists.cpp" />
     <ClCompile Include="pes16.cpp" />
     <ClCompile Include="pes17.cpp" />
     <ClCompile Include="pes18.cpp" />
     <ClCompile Include="pes19.cpp" />
     <ClCompile Include="pes20.cpp" />
+    <ClCompile Include="fpc.cpp" />
     <ClCompile Include="window.cpp" />
   </ItemGroup>
   <ItemGroup>

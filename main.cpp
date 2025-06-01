@@ -41,6 +41,8 @@ void DoFileSave(HWND);
 void data_handler(const TCHAR *);
 void save_handler(const TCHAR *);
 
+void player_names_to_positions();
+
 void export_squad(HWND);
 void import_squad(HWND);
 
@@ -104,6 +106,7 @@ int gn_oldysize = 642;
 int g_prevx=0;
 int giPesVersion = 0;
 int g_bumpAmount = 0;
+bool vglmode = true;
 const uint8_t* gpMasterKey;
 
 int gi_lastAbility = IDC_ABIL_AGGR; //Final control ID in list of Player Ability, for looping over them
@@ -111,6 +114,7 @@ int gi_lastAbility = IDC_ABIL_AGGR; //Final control ID in list of Player Ability
 //Brushes
 HBRUSH gTeamColor1 = NULL;
 HBRUSH gTeamColor2 = NULL;
+HBRUSH g_hbr = NULL;
 
 pf_createFileDescriptorOld createFileDescriptorOld;
 pf_createFileDescriptorNew createFileDescriptorNew;
@@ -136,6 +140,10 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	WNDCLASSEX wc;
 	MSG msg;
 
+	//Create brush for painting main window background so it will match the bg color of the tabs and dialog boxes on all systems
+	COLORREF bkColor = (COLORREF)GetSysColor(COLOR_3DFACE);
+	g_hbr = (HBRUSH)CreateSolidBrush(bkColor);
+
 	wc.cbSize		 = sizeof(WNDCLASSEX);
 	wc.style		 = 0;
 	wc.lpfnWndProc	 = wnd_proc;
@@ -144,7 +152,7 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	wc.hInstance	 = I;
 	wc.hIcon		 = LoadIcon(NULL, IDI_APPLICATION);
 	wc.hCursor		 = LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = (HBRUSH)(COLOR_MENU+1);
+	wc.hbrBackground = g_hbr;
 	wc.lpszMenuName  = MAKEINTRESOURCE(IDR_MAINMENU);
 	wc.lpszClassName = _T("4cc_app");
 	wc.hIconSm		 = LoadIcon(NULL, IDI_APPLICATION);
@@ -163,10 +171,29 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 	ghw_main = CreateWindowEx(
 		0,
 		wc.lpszClassName,
-		_T("4ccEditor VGL 23 Edition (Version B)"),
+		_T("4ccEditor Autumn 24 Edition (Version C)"),
 		WS_OVERLAPPEDWINDOW,
 		20, 20, 1120+144, 700,
 		NULL, NULL, ghinst, NULL);
+
+	if (vglmode) {
+		ghw_main = CreateWindowEx(
+			0,
+			wc.lpszClassName,
+			_T("4ccEditor VGL 24 Edition (Version A)"),
+			WS_OVERLAPPEDWINDOW,
+			20, 20, 1120 + 144, 700,
+			NULL, NULL, ghinst, NULL);
+	}
+	else {
+		ghw_main = CreateWindowEx(
+			0,
+			wc.lpszClassName,
+			_T("4ccEditor Spring 25 Edition (Version C)"),
+			WS_OVERLAPPEDWINDOW,
+			20, 20, 1120 + 144, 700,
+			NULL, NULL, ghinst, NULL);
+	}
 
 	if(ghw_main == NULL)
 	{
@@ -664,6 +691,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 			//Delete icons, fonts and bitmaps
 			DeleteObject((HGDIOBJ)ghFont);
 			FreeLibrary(hPesDecryptDLL);
+			DeleteObject(g_hbr); 
 
 			DestroyWindow(H);
 		break;
@@ -748,6 +776,10 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				case IDM_TEAM_BOGLO:
 					if (gplayers) set_boot_glove_ids();
 					break;
+				case IDM_TEAM_NAMEPOS:
+					if (gn_teamsel > -1) player_names_to_positions();
+					else MessageBox(H, _T("Please select a team."), NULL, MB_ICONWARNING);
+				break;
 				case IDM_TEAM_SAVES:
 					if(gn_teamsel > -1) export_squad(H);
 					else MessageBox(H,_T("Please select a team to be saved."),NULL,MB_ICONWARNING);
@@ -872,8 +904,10 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						_itow_s(goldIR, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
 						
-						_itow_s(goldWeakFoot, buffer, 3, 10);
+						_itow_s(goldWeakFootUse, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(goldWeakFootAcc, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
 					}
 				}
@@ -909,8 +943,10 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						_itow_s(silverIR, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(silverWeakFoot, buffer, 3, 10);
+						_itow_s(silverWeakFootUse, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(silverWeakFootAcc, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
 					}
 				}
@@ -950,8 +986,10 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 						_itow_s(regIR, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(regWeakFoot, buffer, 3, 10);
+						_itow_s(regWeakFootUse, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+						_itow_s(regWeakFootAcc, buffer, 3, 10);
 						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
 					}
 				}
@@ -1359,27 +1397,11 @@ void data_handler(const TCHAR *pcs_file_name)
 		UpdateWindow(GetDlgItem(ghw_tab1, IDC_STATIC_T35));
 
 		//Fill Play Style combobox:	
-		if(SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCOUNT, 0, 0) > 18)
+		int numPlayStyles = 18;
+		SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
+		for (int ii = 0; ii < numPlayStyles; ii++)
 		{
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("None"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Goal Poacher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Dummy Runner"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fox in the Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Prolific Winger"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Classic No. 10"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Hole Player"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Box to Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Anchor Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("The Destroyer"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Extra Frontman"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Target Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Creative Playmaker"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Build Up"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Goalkeeper"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Goalkeeper"));
+			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)gpc_playstyle18[ii] );
 		}
 		
 		//get number of player, team entries
@@ -1433,27 +1455,11 @@ void data_handler(const TCHAR *pcs_file_name)
 			SendDlgItemMessage(ghw_tab2, IDC_PHYS_SKIN, CB_ADDSTRING, 0, (LPARAM)_T("Custom"));
 
 		//Fill Play Style combobox:	
-		if(SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCOUNT, 0, 0) > 18)
+		int numPlayStyles = 18;
+		SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
+		for (int ii = 0; ii < numPlayStyles; ii++)
 		{
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("None"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Goal Poacher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Dummy Runner"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fox in the Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Prolific Winger"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Classic No. 10"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Hole Player"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Box to Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Anchor Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("The Destroyer"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Extra Frontman"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Target Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Creative Playmaker"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Build Up"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Goalkeeper"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Goalkeeper"));
+			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)gpc_playstyle18[ii]);
 		}
 
 		//get number of player, team entries
@@ -1505,27 +1511,11 @@ void data_handler(const TCHAR *pcs_file_name)
 		UpdateWindow(GetDlgItem(ghw_tab1, IDC_STATIC_T35)); //RedrawWindow(static_label, NULL, NULL, RDW_ERASE);
 
 		//Fill Play Style combobox:	
-		if(SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCOUNT, 0, 0) > 18)
+		int numPlayStyles = 18;
+		SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
+		for (int ii = 0; ii < numPlayStyles; ii++)
 		{
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("None"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Goal Poacher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Dummy Runner"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fox in the Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Prolific Winger"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Classic No. 10"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Hole Player"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Box to Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Anchor Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("The Destroyer"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Extra Frontman"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Target Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Creative Playmaker"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Build Up"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Goalkeeper"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Goalkeeper"));
+			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)gpc_playstyle18[ii]);
 		}
 
 		//get number of player, team entries
@@ -1577,31 +1567,11 @@ void data_handler(const TCHAR *pcs_file_name)
 		UpdateWindow(GetDlgItem(ghw_tab1, IDC_STATIC_T35)); //RedrawWindow(static_label, NULL, NULL, RDW_ERASE);
 
 		//Fill Play Style combobox:	
-		if(SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCOUNT, 0, 0) < 22)
+		int numPlayStyles = 22;
+		SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
+		for (int ii = 0; ii < numPlayStyles; ii++)
 		{
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("None"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Goal Poacher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Dummy Runner"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fox in the Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Target Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Creative Playmaker"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Prolific Winger"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Roaming Flank"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Crossing Specialist"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Classic No. 10"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Hole Player"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Box to Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("The Destroyer"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Orchestrator"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Anchor Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Build Up"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fullback Finisher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Extra Frontman"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Goalkeeper"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Goalkeeper"));
+			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)gpc_playstyle19[ii]);
 		}
 
 		//Enable extra skill checkboxes up to 39
@@ -1707,31 +1677,11 @@ void data_handler(const TCHAR *pcs_file_name)
 		SendDlgItemMessage(ghw_tab2, IDC_MOTI_GC2, UDM_SETRANGE, 0, MAKELPARAM(0, 162));
 
 		//Fill Play Style combobox:	
-		if(SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_GETCOUNT, 0, 0) < 22)
+		int numPlayStyles = 22;
+		SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
+		for (int ii = 0; ii < numPlayStyles; ii++)
 		{
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_RESETCONTENT, 0, 0);
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("None"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Goal Poacher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Dummy Runner"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fox in the Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Target Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Creative Playmaker"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Prolific Winger"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Roaming Flank"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Crossing Specialist"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Classic No. 10"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Hole Player"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Box to Box"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("The Destroyer"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Orchestrator"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Anchor Man"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Fullback Finisher"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Fullback"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Build Up"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Extra Frontman"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Offensive Goalkeeper"));
-			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)_T("Defensive Goalkeeper"));
+			SendDlgItemMessage(ghw_main, IDC_PLAY_STYL, CB_ADDSTRING, 0, (LPARAM)gpc_playstyle20[ii]);
 		}
 
 		//Enable extra skill checkboxes
@@ -2313,7 +2263,7 @@ void show_player_info(int p_ind)
 
 		SendDlgItemMessage(ghw_tab2, IDC_STRP_UNDR, CB_SETCURSEL, (WPARAM)gplayers[p_ind].undershorts, 0);
 
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_SETCURSEL, (WPARAM)gplayers[p_ind].tucked, 0);
+		SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_SETCURSEL, (WPARAM)gplayers[p_ind].untucked, 0);
 
 		Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_ANTA),gplayers[p_ind].ankle_tape);
 		Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV),gplayers[p_ind].gloves);
@@ -2964,7 +2914,7 @@ player_entry get_form_player_info(int index)
 
 	output.undershorts = SendDlgItemMessage(ghw_tab2, IDC_STRP_UNDR, CB_GETCURSEL, 0, 0);
 
-	output.tucked = SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_GETCURSEL, 0, 0);
+	output.untucked = SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_GETCURSEL, 0, 0);
 
 	if(Button_GetCheck(GetDlgItem(ghw_tab2, IDB_STRP_ANTA))==BST_CHECKED) output.ankle_tape=true;
 	else output.ankle_tape=false;
@@ -3969,42 +3919,19 @@ void team_fpc_on()
 
 	if(gn_listsel > -1)
 	{
-		if(giPesVersion==16)
-		{
-			_tcscpy_s(fpcBoot, 3, _T("55"));
-			_tcscpy_s(fpcGkGlove, 3, _T("11"));
-			i_fpcBoot = 55;
-			i_fpcGkGlove = 11;
-		}
-		else
-		{
-			_tcscpy_s(fpcBoot, 3, _T("38"));
-			_tcscpy_s(fpcGkGlove, 3, _T("12"));
-			i_fpcBoot = 38;
-			i_fpcGkGlove = 12;
-		}
-		
-		_tcscpy_s(fpcBootZero, 3, _T("0"));
-		_tcscpy_s(fpcGkGloveZero, 3, _T("0"));
-				
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_WRTA, CB_SETCURSEL, (WPARAM)0, 0);		
-		if (SendDlgItemMessage(ghw_main, IDC_PLAY_RPOS, CB_GETCURSEL, 0, 0) && giPesVersion == 17) //GK sleeves are different in pre-Fox versions
-			SendDlgItemMessage(ghw_tab2, IDC_STRP_SLEE, CB_SETCURSEL, (WPARAM)1, 0);
-		else
-			SendDlgItemMessage(ghw_tab2, IDC_STRP_SLEE, CB_SETCURSEL, (WPARAM)2, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SOCK, CB_SETCURSEL, (WPARAM)2, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_SETCURSEL, (WPARAM)0, 0);
-		Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_ANTA),BST_UNCHECKED);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SLIN, CB_SETCURSEL, (WPARAM)0, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_UNDR, CB_SETCURSEL, (WPARAM)0, 0);
-		GetDlgItemText(ghw_tab2, IDT_STRP_BOID, buffer, 20);
-		if (!_tcscmp(buffer, fpcBootZero) && giPesVersion < 19)
-			SendDlgItemMessage(ghw_tab2, IDT_STRP_BOID, WM_SETTEXT, 0, (LPARAM)(fpcBoot));
-		GetDlgItemText(ghw_tab2, IDT_STRP_GLID, buffer, 20);
-		if (!_tcscmp(buffer, fpcGkGloveZero) && giPesVersion < 19)
-			SendDlgItemMessage(ghw_tab2, IDT_STRP_GLID, WM_SETTEXT, 0, (LPARAM)(fpcGkGlove));
-		if(giPesVersion==18) Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV),BST_CHECKED); else Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV), BST_UNCHECKED);
+		//Hide currently selected player
+		enable_fpc_invis_for_displayed_player(ghw_tab2, giPesVersion);
 
+		//Update current player entry
+		player_entry pe_current = get_form_player_info(gn_playind[gn_listsel]);
+		if (!(gplayers[gn_playind[gn_listsel]] == pe_current))
+		{
+			if (wcscmp(gplayers[gn_playind[gn_listsel]].name, pe_current.name))
+				pe_current.b_edit_player = true;
+			gplayers[gn_playind[gn_listsel]] = pe_current;
+		}
+
+		//Loop through team and turn on FPC invis for each
 		if(gplayers[gn_playind[gn_listsel]].team_ind >= 0)
 		{
 			iteam = gplayers[gn_playind[gn_listsel]].team_ind;
@@ -4016,77 +3943,7 @@ void team_fpc_on()
 					{
 						if( gteams[iteam].players[ii]==gplayers[jj].id )
 						{
-							if(gplayers[jj].tucked) 
-							{
-								gplayers[jj].tucked=false;
-								gplayers[jj].b_changed=true;
-							}
-							if (giPesVersion == 17) {
-								if (gplayers[jj].sleeve != 2 && gplayers[jj].reg_pos != 0) {
-									gplayers[jj].sleeve = 2;
-									gplayers[jj].b_changed = true;
-								}
-								else if (gplayers[jj].sleeve != 1 && gplayers[jj].reg_pos == 0){
-									gplayers[jj].sleeve = 1;
-									gplayers[jj].b_changed = true;
-								}
-							}
-							else {
-								if (gplayers[jj].sleeve != 2) {
-									gplayers[jj].sleeve = 2;
-									gplayers[jj].b_changed = true;
-								}
-							}
-							if (gplayers[jj].skin_col != 7 && giPesVersion == 17)
-							{
-								gplayers[jj].skin_col = 7;
-								gplayers[jj].b_changed = true;
-							}
-							if(gplayers[jj].boot_id!=i_fpcBoot && giPesVersion<19 && gplayers[jj].boot_id==0 && giPesVersion != 17)
-							{
-								gplayers[jj].boot_id=i_fpcBoot;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].glove_id!=i_fpcGkGlove && giPesVersion<19 && gplayers[jj].glove_id == 0 && giPesVersion != 17)
-							{
-								gplayers[jj].glove_id=i_fpcGkGlove;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].socks!=2)
-							{
-								gplayers[jj].socks=2;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].wrist_tape!=0)
-							{
-								gplayers[jj].wrist_tape=0;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].ankle_tape) 
-							{
-								gplayers[jj].ankle_tape=false;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].inners) 
-							{
-								gplayers[jj].inners=0;
-								gplayers[jj].b_changed=true;
-							}
-							if (gplayers[jj].undershorts!=0)
-							{
-								gplayers[jj].undershorts = 0;
-								gplayers[jj].b_changed = true;
-							}
-							if (gplayers[jj].gloves)
-							{
-								gplayers[jj].gloves = false;
-								gplayers[jj].b_changed = true;
-							}
-							if(!gplayers[jj].gloves && giPesVersion==18) 
-							{
-								gplayers[jj].gloves=true;
-								gplayers[jj].b_changed=true;
-							}
+							enable_fpc_invis_for_player(gplayers[jj], giPesVersion);
 							break;
 						}
 					}
@@ -4107,35 +3964,17 @@ void team_fpc_off()
 
 	if(gn_listsel > -1)
 	{
-		if(giPesVersion==16)
-		{
-			_tcscpy_s(fpcBoot, 3, _T("55"));
-			_tcscpy_s(fpcGkGlove, 3, _T("11"));
-			i_fpcBoot = 55;
-			i_fpcGkGlove = 11;
-		}
-		else
-		{
-			_tcscpy_s(fpcBoot, 3, _T("38"));
-			_tcscpy_s(fpcGkGlove, 3, _T("12"));
-			i_fpcBoot = 38;
-			i_fpcGkGlove = 12;
-		}
+		//Show currently selected player
+		disable_fpc_invis_for_displayed_player(ghw_tab2, giPesVersion);
 
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_WRTA, CB_SETCURSEL, (WPARAM)0, 0);
-		GetDlgItemText(ghw_tab2, IDC_PHYS_SKIN, buffer, 20);
-		if (giPesVersion < 18 && lstrcmp(buffer,L"Custom")==0) SendDlgItemMessage(ghw_tab2, IDC_PHYS_SKIN, CB_SETCURSEL, (WPARAM)1, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SLEE, CB_SETCURSEL, (WPARAM)1, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SOCK, CB_SETCURSEL, (WPARAM)0, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_SETCURSEL, (WPARAM)1, 0);
-		GetDlgItemText(ghw_tab2, IDT_STRP_BOID, buffer, 20);
-		if( !_tcscmp(buffer,fpcBoot) && giPesVersion<19 )
-			SendDlgItemMessage(ghw_tab2, IDT_STRP_BOID, WM_SETTEXT, 0, (LPARAM)_T("0"));
-		GetDlgItemText(ghw_tab2, IDT_STRP_GLID, buffer, 20);
-		if( !_tcscmp(buffer,fpcGkGlove) && giPesVersion<19 )
-			SendDlgItemMessage(ghw_tab2, IDT_STRP_GLID, WM_SETTEXT, 0, (LPARAM)_T("0"));
-		if(giPesVersion==18) Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV),BST_UNCHECKED);
-		Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_ANTA), BST_UNCHECKED);
+		//Update current player entry
+		player_entry pe_current = get_form_player_info(gn_playind[gn_listsel]);
+		if (!(gplayers[gn_playind[gn_listsel]] == pe_current))
+		{
+			if (wcscmp(gplayers[gn_playind[gn_listsel]].name, pe_current.name))
+				pe_current.b_edit_player = true;
+			gplayers[gn_playind[gn_listsel]] = pe_current;
+		}
 
 		if(gplayers[gn_playind[gn_listsel]].team_ind >= 0)
 		{
@@ -4148,46 +3987,7 @@ void team_fpc_off()
 					{
 						if( gteams[iteam].players[ii]==gplayers[jj].id )
 						{
-							if(!gplayers[jj].tucked) 
-							{
-								gplayers[jj].tucked=true;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].sleeve==2)
-							{
-								gplayers[jj].sleeve=1;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].boot_id==i_fpcBoot && giPesVersion<19)
-							{
-								gplayers[jj].boot_id=0;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].glove_id==i_fpcGkGlove && giPesVersion<19)
-							{
-								gplayers[jj].glove_id=0;
-								gplayers[jj].b_changed=true;
-							}
-							if(gplayers[jj].socks==2)
-							{
-								gplayers[jj].socks=0;
-								gplayers[jj].b_changed=true;
-							}
-							if (gplayers[jj].wrist_tape != 0)
-							{
-								gplayers[jj].wrist_tape = 0;
-								gplayers[jj].b_changed = true;
-							}
-							if (gplayers[jj].ankle_tape)
-							{
-								gplayers[jj].ankle_tape = false;
-								gplayers[jj].b_changed = true;
-							}
-							if(gplayers[jj].gloves && giPesVersion==18) 
-							{
-								gplayers[jj].gloves=false;
-								gplayers[jj].b_changed=true;
-							}
+							disable_fpc_invis_for_player(gplayers[jj], giPesVersion);
 							break;
 						}
 					}
@@ -4199,67 +3999,13 @@ void team_fpc_off()
 
 void fpc_toggle()
 {
-	TCHAR buffer[20];
-	TCHAR fpcBoot[3], fpcGkGlove[3], fpcBootZero[3], fpcGkGloveZero[3];
-
-	if(giPesVersion==16)
+	if(SendDlgItemMessage(ghw_tab2, IDC_STRP_SOCK, CB_GETCURSEL, 0, 0) == 2) //If short socks, assume FPC is set and remove FPC invisibility settings
 	{
-		_tcscpy_s(fpcBoot, 3, _T("55"));
-		_tcscpy_s(fpcGkGlove, 3, _T("11"));
+		disable_fpc_invis_for_displayed_player(ghw_tab2, giPesVersion);
 	}
-	else
+	else //Otherwise, assume FPC isn't set and turn on FPC invisibility settings
 	{
-		_tcscpy_s(fpcBoot, 3, _T("38"));
-		_tcscpy_s(fpcGkGlove, 3, _T("12"));
-	}
-	
-	_tcscpy_s(fpcBootZero, 3, _T("0"));
-	_tcscpy_s(fpcGkGloveZero, 3, _T("0"));
-	
-	GetDlgItemText(ghw_tab2, IDT_STRP_BOID, buffer, 20);
-	//if( !_tcscmp(buffer, fpcBoot) ) //If it's 38, FPC is set
-	if(SendDlgItemMessage(ghw_tab2, IDC_STRP_SOCK, CB_GETCURSEL, 0, 0) == 2) //If short socks, FPC is set
-	{
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_WRTA, CB_SETCURSEL, (WPARAM)0, 0);
-		GetDlgItemText(ghw_tab2, IDC_PHYS_SKIN, buffer, 20);
-		if (giPesVersion < 18 && lstrcmp(buffer, L"Custom") == 0) SendDlgItemMessage(ghw_tab2, IDC_PHYS_SKIN, CB_SETCURSEL, (WPARAM)1, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SLEE, CB_SETCURSEL, (WPARAM)1, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SOCK, CB_SETCURSEL, (WPARAM)0, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_SETCURSEL, (WPARAM)1, 0);
-		Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_ANTA), BST_UNCHECKED);
-		if(giPesVersion<19)
-		{
-			GetDlgItemText(ghw_tab2, IDT_STRP_BOID, buffer, 20);
-			if (!_tcscmp(buffer, fpcBoot) && giPesVersion < 19)
-				SendDlgItemMessage(ghw_tab2, IDT_STRP_BOID, WM_SETTEXT, 0, (LPARAM)_T("0"));
-			GetDlgItemText(ghw_tab2, IDT_STRP_GLID, buffer, 20);
-			if( !_tcscmp(buffer, fpcGkGlove) )
-				SendDlgItemMessage(ghw_tab2, IDT_STRP_GLID, WM_SETTEXT, 0, (LPARAM)_T("0"));
-		}
-		if(giPesVersion==18) Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV),BST_UNCHECKED); 
-	}
-	else //Otherwise, set to FPC invis
-	{		
-		if (SendDlgItemMessage(ghw_main, IDC_PLAY_RPOS, CB_GETCURSEL, 0, 0) && giPesVersion == 17) //GK sleeves are different in pre-Fox versions
-			SendDlgItemMessage(ghw_tab2, IDC_STRP_SLEE, CB_SETCURSEL, (WPARAM)1, 0);
-		else
-			SendDlgItemMessage(ghw_tab2, IDC_STRP_SLEE, CB_SETCURSEL, (WPARAM)2, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_WRTA, CB_SETCURSEL, (WPARAM)0, 0);		
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SOCK, CB_SETCURSEL, (WPARAM)2, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_TAIL, CB_SETCURSEL, (WPARAM)0, 0);
-		Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_ANTA),BST_UNCHECKED);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_SLIN, CB_SETCURSEL, (WPARAM)0, 0);
-		SendDlgItemMessage(ghw_tab2, IDC_STRP_UNDR, CB_SETCURSEL, (WPARAM)0, 0);
-		GetDlgItemText(ghw_tab2, IDT_STRP_BOID, buffer, 20);
-		if (!_tcscmp(buffer, fpcBootZero) && giPesVersion < 19)
-			SendDlgItemMessage(ghw_tab2, IDT_STRP_BOID, WM_SETTEXT, 0, (LPARAM)(fpcBoot));
-		GetDlgItemText(ghw_tab2, IDT_STRP_GLID, buffer, 20);
-		if (!_tcscmp(buffer, fpcGkGloveZero) && giPesVersion < 19)
-			SendDlgItemMessage(ghw_tab2, IDT_STRP_GLID, WM_SETTEXT, 0, (LPARAM)(fpcGkGlove));
-		if (giPesVersion == 18) 
-			Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV),BST_CHECKED);
-		else 
-			Button_SetCheck(GetDlgItem(ghw_tab2, IDB_STRP_GLOV), BST_UNCHECKED);
+		enable_fpc_invis_for_displayed_player(ghw_tab2, giPesVersion);
 	}
 }
 
@@ -4908,82 +4654,19 @@ void roster_data_output()
 //	char* buffer;
 //	wchar_t short_name[0x4];
 
-	TCHAR* poss[] = {_T("GK"),_T("CB"),_T("LB"),_T("RB"),_T("DMF"),_T("CMF"),_T("LMF"),_T("RMF"),_T("AMF"),
-						_T("LWF"),_T("RWF"),_T("SS"),_T("CF")};
-	TCHAR** playstyle;
-	TCHAR* playstyle20[] = {_T("None"),
-							  _T("Goal Poacher"),
-							  _T("Dummy Runner"),
-							  _T("Fox in the Box"),
-							  _T("Target Man"),
-							  _T("Creative Playmaker"),
-							  _T("Prolific Winger"),
-							  _T("Roaming Flank"),
-							  _T("Crossing Specialist"),
-							  _T("Classic No. 10"),
-							  _T("Hole Player"),
-							  _T("Box to Box"),
-							  _T("The Destroyer"),
-							  _T("Orchestrator"),
-							  _T("Anchor Man"),
-							  _T("Offensive Fullback"),
-							  _T("Fullback Finisher"),
-							  _T("Defensive Fullback"),
-							  _T("Build Up"),
-							  _T("Extra Frontman"),
-							  _T("Offensive Goalkeeper"),
-							  _T("Defensive Goalkeeper")};
-	TCHAR* playstyle19[] = {_T("None"),
-							  _T("Goal Poacher"),
-							  _T("Dummy Runner"),
-							  _T("Fox in the Box"),
-							  _T("Target Man"),
-							  _T("Creative Playmaker"),
-							  _T("Prolific Winger"),
-							  _T("Roaming Flank"),
-							  _T("Crossing Specialist"),
-							  _T("Classic No. 10"),
-							  _T("Hole Player"),
-							  _T("Box to Box"),
-							  _T("The Destroyer"),
-							  _T("Orchestrator"),
-							  _T("Anchor Man"),
-							  _T("Build Up"),
-							  _T("Offensive Fullback"),
-							  _T("Fullback Finisher"),
-							  _T("Defensive Fullback"),
-							  _T("Extra Frontman"),
-							  _T("Offensive Goalkeeper"),
-							  _T("Defensive Goalkeeper")};
-	TCHAR* playstyle18[] = {_T("None"),
-						  _T("Goal Poacher"),
-						  _T("Dummy Runner"),
-						  _T("Fox in the Box"),
-						  _T("Prolific Winger"),
-						  _T("Classic No. 10"),
-						  _T("Hole Player"),
-						  _T("Box to Box"),
-						  _T("Anchor Man"),
-						  _T("The Destroyer"),
-						  _T("Extra Frontman"),
-						  _T("Offensive Fullback"),
-						  _T("Defensive Fullback")
-						  _T("Target Man"),
-						  _T("Creative Playmaker"),
-						  _T("Build Up"),
-						  _T("Offensive Goalkeeper"),
-						  _T("Defensive Goalkeeper")};
+	TCHAR** playstyle; //pointer to playstyle lists for 18 (and under), 19, or 20 (and up)
+
 	if(giPesVersion>=20)
 	{
-		playstyle = playstyle20;
+		playstyle = gpc_playstyle20;
 	}
 	else if(giPesVersion==19)
 	{
-		playstyle = playstyle19;
+		playstyle = gpc_playstyle19;
 	}
 	else
 	{
-		playstyle = playstyle18;
+		playstyle = gpc_playstyle18;
 	}
 	TCHAR* playskills[] = {_T("Scissors Feint"),
 	_T("Flip Flap"),
@@ -5109,7 +4792,7 @@ void roster_data_output()
 						}
 
 						_ftprintf(outStream, _T("%d\t%s\t%s\t%s\n"), gteams[iteam].numbers[ii], gplayers[jj].name,
-							poss[gplayers[jj].reg_pos], outstr.c_str());
+							gpc_pos_short[gplayers[jj].reg_pos], outstr.c_str());
 //for Ved:					_ftprintf(outStream, _T("%s,%s,%s%d\n"), poss[gplayers[jj].reg_pos], gplayers[jj].name,
 //									short_name,ii+1);
 						break;
@@ -5129,15 +4812,15 @@ void fix_database()
 
 	for(ii=0;ii<gnum_players;ii++)
 	{
-		if(!gplayers[ii].b_base_copy && gplayers[ii].copy_id != gplayers[ii].id)
+		if(!gplayers[ii].b_base_copy && gplayers[ii].copy_id != gplayers[ii].id && gplayers[ii].copy_id != 0)
 		{
-			gplayers[ii].copy_id = gplayers[ii].id;
+			gplayers[ii].copy_id = 0;
 			gplayers[ii].b_changed=true;
 		}
 		else if(gplayers[ii].b_base_copy && 
-			    (gplayers[ii].copy_id == gplayers[ii].id || gplayers[ii].copy_id == 0))
+			    (gplayers[ii].copy_id == gplayers[ii].id || gplayers[ii].copy_id == 0)) //If it's not a base copy of another player but the base copy flag is set, unset it
 		{
-			gplayers[ii].copy_id = gplayers[ii].id;
+			//gplayers[ii].copy_id = gplayers[ii].id;
 			gplayers[ii].b_base_copy=false;
 			gplayers[ii].b_changed=true;
 		}
@@ -5169,9 +4852,59 @@ void fix_database()
 	if(gn_listsel > -1)
 		show_player_info(gn_playind[gn_listsel]);
 
-	for (ii = 0; ii < gnum_teams; ii++)
+	//Clear the Team Strip Edited flag and reset strip values
+	for (ii=0; ii < gnum_teams; ii++)
 	{
-		gteams[ii].b_changed = true;
+		//Set Edited Strip flag to false
+		if (gteams[ii].b_edit_strip)
+		{
+			gteams[ii].b_edit_strip = false;
+			gteams[ii].b_changed = true;
+		}
+		//Return strip settings to default configuration:
+		//Set first 3 strip entries to Kit 1 (0), Kit 2 (1), and GK kit (0x80), and IDs to Team Id * 0x40
+		//Set all subsequent strip entries to a non-existent team ID (0xFFFFC0)
+		if (gteams[ii].stripBlock[0].stripNumber != 0x0 || 
+			gteams[ii].stripBlock[0].stripTeamId != gteams[ii].id * 0x40)
+		{
+			gteams[ii].stripBlock[0].stripNumber = 0x0;
+			gteams[ii].stripBlock[0].stripTeamId = gteams[ii].id * 0x40;
+			gteams[ii].b_changed = true;
+		}
+		if (gteams[ii].stripBlock[1].stripNumber != 0x1 ||
+			gteams[ii].stripBlock[1].stripTeamId != gteams[ii].id * 0x40)
+		{
+			gteams[ii].stripBlock[1].stripNumber = 0x1;
+			gteams[ii].stripBlock[1].stripTeamId = gteams[ii].id * 0x40;
+			gteams[ii].b_changed = true;
+		}
+		if (gteams[ii].stripBlock[2].stripNumber != 0x80 ||
+			gteams[ii].stripBlock[2].stripTeamId != gteams[ii].id * 0x40)
+		{
+			gteams[ii].stripBlock[2].stripNumber = 0x80; //GK strip
+			gteams[ii].stripBlock[2].stripTeamId = gteams[ii].id * 0x40;
+			gteams[ii].b_changed = true;
+		}
+		for (int jj = 3; jj < 10; jj++)
+		{
+			if (gteams[ii].stripBlock[jj].stripNumber != 0x0 ||
+				gteams[ii].stripBlock[jj].stripTeamId != 0xFFFFC0)
+			{
+				gteams[ii].stripBlock[jj].stripNumber = 0x0;
+				gteams[ii].stripBlock[jj].stripTeamId = 0xFFFFC0; //Non-existent team ID
+				gteams[ii].b_changed = true;
+			}
+		}
+	}
+	if (giPesVersion == 17)
+	{	//Fix kit team IDs in Unknown section so kit preview colors 12 and 2 display properly
+		int current_byte = 0x425180;
+		FileDescriptorOld* pDescriptorOld = (FileDescriptorOld*)ghdescriptor;
+		for (int ii = 0; ii < 2500; ii++) //2500 entries
+		{
+			write_dataOld(0xFFFFC0, 0, 4 * 8, current_byte, pDescriptorOld);
+			current_byte += 0x80;
+		}
 	}
 }
 
@@ -5192,6 +4925,54 @@ void scroll_player_down()
 		ListView_EnsureVisible(GetDlgItem(ghw_main, IDC_NAME_LIST), gn_listsel+1, false);
 		ListView_SetItemState(GetDlgItem(ghw_main, IDC_NAME_LIST), gn_listsel+1, LVIS_SELECTED, LVIS_SELECTED);
 	}	
+}
+
+void player_names_to_positions()
+{
+	int num_on_team, csel, current_listsel;
+	TCHAR buffer[61];
+	LVITEM lvI;
+
+	if (gn_listsel < 0)
+		return;
+
+	//Save current listbox selection index to restore at end
+	current_listsel = gn_listsel;
+
+	csel = SendDlgItemMessage(ghw_main, IDC_TEAM_LIST, CB_GETCURSEL, 0, 0) - 1;
+
+	//Update current player entry
+	player_entry pe_current = get_form_player_info(gn_playind[gn_listsel]);
+	if (!(gplayers[gn_playind[gn_listsel]] == pe_current))
+	{
+		gplayers[gn_playind[gn_listsel]] = pe_current;
+	}
+
+	//Loop over each entry in the player listview
+	//Access the entry in the gplayer array for each player listed in the listview
+	int maxNames = SendDlgItemMessage(ghw_main, IDC_NAME_LIST, LVM_GETITEMCOUNT, 0, 0);
+	for (int ii = 0; ii < maxNames; ii++)
+	{
+		//Update gn_listsel to each item in the list to avoid triggering the (iItem != gn_listsel) condition in LVN_ITEMCHANGED
+		//Will change back to actual selection at end
+		gn_listsel = ii;
+		//Update the name to the registered position
+		wcsncpy_s(gplayers[gn_playind[ii]].name, gpc_positions[gplayers[gn_playind[ii]].reg_pos], 61); //Could also use gpc_pos_short
+		gplayers[gn_playind[ii]].b_edit_player = true;
+		//if (!wcscmp(gplayers[ii].name, buffer))
+
+		//Update displayed name in name in the listview
+		memset(&lvI, 0, sizeof(lvI)); //Zero out struct members
+		lvI.mask = LVIF_TEXT;
+		lvI.pszText = gplayers[gn_playind[ii]].name;
+		lvI.iItem = ii;
+		SendDlgItemMessage(ghw_main, IDC_NAME_LIST, LVM_SETITEM, 0, (LPARAM)&lvI);
+	}
+
+	//Then refresh the displayed data for the selected player
+	gn_listsel = current_listsel;
+	TCHAR* tmp = gplayers[gn_playind[gn_listsel]].name;
+	show_player_info(gn_playind[gn_listsel]);
 }
 
 void export_squad(HWND hwnd)
@@ -5382,7 +5163,7 @@ void import_squad(HWND hwnd)
 			pesVer = atoi(c_pesVer);
 			
 			//Find number of players on this team
-			for(num_on_team=0;num_on_team< gteams->team_max;num_on_team++)
+			for(num_on_team=0; num_on_team < gteams->team_max; num_on_team++)
 			{
 				if(!gteams[gn_teamCbIndToArray[csel]].players[num_on_team]) break;
 			}

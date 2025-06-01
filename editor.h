@@ -63,22 +63,20 @@ struct player_export
 	unsigned char cover; //Coverage 
 	unsigned char weak_use; //Weak Foot Usage
 	unsigned char play_pos[13]; //Playable Position 
-	/*
-position	reg_pos	play_pos
-GK	0	12
-CB	1	9
-LB	2	10
-RB	3	11
-DMF	4	5
-CMF	5	6
-LMF	6	7
-RMF	7	8
-AMF	8	4
-LWF	9	8
-RWF	10	3
-SS	11	1
-CF	12	0
-	*/
+	/* position	reg_pos	play_pos
+		GK		0		12
+		CB		1		9
+		LB		2		10
+		RB		3		11
+		DMF		4		5
+		CMF		5		6
+		LMF		6		7
+		RMF		7		8
+		AMF		8		4
+		LWF		9		2
+		RWF		10		3
+		SS		11		1
+		CF		12		0 */
 	unsigned char mo_hunchd; //Motion: Hunching (dribbling) 
 	unsigned char mo_hunchr; //Motion: Hunching (running) 
 	unsigned char mo_pk; //Motion: Penalty Kick 
@@ -179,7 +177,7 @@ CF	12	0
 	unsigned char inners; //Long-Sleeved Inners 
 	unsigned char socks; //Sock Length 
 	unsigned char undershorts; //Undershorts 
-	bool tucked; //Shirttail 
+	bool untucked; //Shirttail 
 	bool ankle_tape; //Ankle Taping 
 	bool gloves; //Player Gloves 
 	unsigned char gloves_col; //Player Gloves color 
@@ -293,7 +291,7 @@ struct player_entry : player_export
 		b_out = b_out &&(this->strong_foot==rhs.strong_foot);
 		b_out = b_out &&(this->swerve==rhs.swerve);
 		b_out = b_out &&(this->thigh==rhs.thigh);
-		b_out = b_out &&(this->tucked==rhs.tucked);
+		b_out = b_out &&(this->untucked==rhs.untucked);
 		b_out = b_out &&(this->undershorts==rhs.undershorts);
 		b_out = b_out &&(this->waist==rhs.waist);
 		b_out = b_out &&(this->weak_acc==rhs.weak_acc);
@@ -405,7 +403,7 @@ struct player_entry : player_export
 		pExport.inners = this->inners; //Long-Sleeved Inners 
 		pExport.socks = this->socks; //Sock Length 
 		pExport.undershorts = this->undershorts; //Undershorts 
-		pExport.tucked = this->tucked; //Shirttail 
+		pExport.untucked = this->untucked; //Shirttail 
 		pExport.ankle_tape = this->ankle_tape; //Ankle Taping 
 		pExport.gloves = this->gloves; //Player Gloves 
 		pExport.gloves_col = this->gloves_col; //Player Gloves color 
@@ -525,7 +523,7 @@ struct player_entry : player_export
 			this->inners = pImport.inners; //Long-Sleeved Inners 
 			this->socks = pImport.socks; //Sock Length 
 			this->undershorts = pImport.undershorts; //Undershorts 
-			this->tucked = pImport.tucked; //Shirttail 
+			this->untucked = pImport.untucked; //Shirttail 
 			this->ankle_tape = pImport.ankle_tape; //Ankle Taping 
 			this->gloves = pImport.gloves; //Player Gloves 
 			this->gloves_col = pImport.gloves_col; //Player Gloves color 
@@ -539,6 +537,11 @@ struct player_entry : player_export
 	}
 };
 
+struct stripSet
+{
+	unsigned char stripNumber; //1 byte, Number of kit starting from 00, or 0x80 if goalkeeper
+	unsigned long stripTeamId; //3 bytes, Team ID * 0x40
+};
 
 struct team_entry
 {
@@ -553,6 +556,7 @@ struct team_entry
 	uint16_t numbers[team_max];
 	bool b_edit_name;
 	bool b_edit_stadium;
+	bool b_edit_strip; //Edited Strip flag
 
 	int num_on_team;
 
@@ -566,6 +570,9 @@ struct team_entry
 	char color2_blue;
 	char color2_green;
 
+	//Team strip block
+	stripSet stripBlock[10];
+
 	bool b_changed;
 	bool b_show;
 
@@ -576,6 +583,7 @@ struct team_entry
 		b_show = true;
 		b_edit_name = false;
 		b_edit_stadium = false;
+		b_edit_strip = false;
 		memset(name,0,sizeof(name));
 		memset(short_name,0,sizeof(short_name));
 		for(int ii=0; ii<11; ii++) starting11[ii]=0;
@@ -586,6 +594,12 @@ struct team_entry
 		color2_red = 0;
 		color2_blue = 0;
 		color2_green = 0;
+
+		for (int ii = 0; ii < 10; ii++)
+		{
+			stripBlock[ii].stripNumber = 0;
+			stripBlock[ii].stripTeamId = 0;
+		}
 
 		manager_id = 0;
 		stadium_id = 0;
@@ -622,6 +636,17 @@ struct resize_info
 	float scale;
 	HDWP hdefer;
 };
+
+
+//Combobox item definitions
+
+extern TCHAR* gpc_playstyle18[];
+extern TCHAR* gpc_playstyle19[];
+extern TCHAR* gpc_playstyle20[];
+extern TCHAR* gpc_positions[];
+extern TCHAR* gpc_pos_short[];
+
+//Function prototypes
 
 void fill_player_entry16(player_entry &, int &, void*);
 void fill_appearance_entry16(player_entry &, int &, void*);
@@ -678,3 +703,9 @@ int read_data(int, int, int&, FileDescriptorNew*);
 void write_data(int, int, int, int&, FileDescriptorNew*);
 int read_dataOld(int, int, int&, FileDescriptorOld*);
 void write_dataOld(int, int, int, int&, FileDescriptorOld*);
+
+//fpc.cpp functions
+void enable_fpc_invis_for_displayed_player(HWND, int);
+void disable_fpc_invis_for_displayed_player(HWND, int);
+void enable_fpc_invis_for_player(player_entry&, int);
+void disable_fpc_invis_for_player(player_entry&, int);
