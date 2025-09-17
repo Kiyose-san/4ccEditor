@@ -172,7 +172,7 @@ int APIENTRY _tWinMain(HINSTANCE I, HINSTANCE PI, LPTSTR CL, int SC)
 		ghw_main = CreateWindowEx(
 			0,
 			wc.lpszClassName,
-			_T("4ccEditor VGL 24 Edition (Version A)"),
+			_T("4ccEditor VGL 24 Edition (Version B)"),
 			WS_OVERLAPPEDWINDOW,
 			20, 20, 1120 + 144, 700,
 			NULL, NULL, ghinst, NULL);
@@ -886,21 +886,40 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
-						_itow_s(goldRate, buffer, 3, 10);
-						for(int ii=IDT_ABIL_ATKP;ii<gi_lastAbility;ii+=2)
-							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+						if (vglmode) {
+							_itow_s(goldRate_vgl, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(goldForm, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(goldForm_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(goldIR, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
-						
-						_itow_s(goldWeakFootUse, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(goldIR_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(goldWeakFootAcc, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(goldWeakFoot_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(goldWeakFoot_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
+						else {
+							_itow_s(goldRate, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(goldForm, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(goldIR, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(goldWeakFootUse, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(goldWeakFootAcc, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
 					}
 				}
 				break;
@@ -925,21 +944,41 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
-						_itow_s(silverRate, buffer, 3, 10);
-						for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
-							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+						if (vglmode) {
+							_itow_s(silverRate_vgl, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(silverForm, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(silverForm_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(silverIR, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(silverIR_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(silverWeakFootUse, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(silverWeakFoot_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(silverWeakFootAcc, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(silverWeakFoot_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
+						else {
+							_itow_s(silverRate, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(silverForm, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(silverIR, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(silverWeakFootUse, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(silverWeakFootAcc, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
+
 					}
 				}
 				break;
@@ -965,24 +1004,44 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
+
+						if (vglmode) {
+							_itow_s(regRate_vgl, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regForm_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regIR_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regWeakFoot_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regWeakFoot_vgl, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
+						else {
 							//if(ii==IDT_ABIL_DEFP || ii==IDT_ABIL_BWIN || ii==IDT_ABIL_EXPL) //Nerf Defensive Prowess, Ball winning and Explosive power to 72
-							//	SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
+//	SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
 
-						_itow_s(regRate, buffer, 3, 10);
-						for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
-							SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(regRate, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(regForm, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(regForm, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(regIR, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(regIR, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(regWeakFootUse, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(regWeakFootUse, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
 
-						_itow_s(regWeakFootAcc, buffer, 3, 10);
-						SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+							_itow_s(regWeakFootAcc, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
 					}
 				}
 				break;

@@ -62,3 +62,18 @@ extern int heightTall;
 extern int heightTallGK;
 extern int heightMid;
 extern int heightManlet;
+
+extern int silverRate_vgl;
+extern int silverForm_vgl;
+extern int silverIR_vgl;
+extern int silverWeakFoot_vgl;
+
+extern int goldRate_vgl;
+extern int goldForm_vgl;
+extern int goldIR_vgl;
+extern int goldWeakFoot_vgl;
+
+extern int regRate_vgl;
+extern int regForm_vgl;
+extern int regIR_vgl;
+extern int regWeakFoot_vgl;
