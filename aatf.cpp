@@ -111,8 +111,9 @@ int heightMid = 180;
 int heightManlet = 175;
 
 //VGL Settings
-int manletBonus_vgl = 0;
-int silverManletBonus_vgl = 0;
+int manletBonus_vgl = 5;
+int silverManletBonus_vgl = 2;
+int goldManletBonus_vgl = 2;
 int goldGiantPen_vgl = 0;
 int silverGiantPen_vgl = 0;
 int goldRate_vgl = 99;
@@ -156,17 +157,22 @@ int blueMid_vgl = 0;
 int blueManlet_vgl = 0;
 
 int purpleColossal_vgl = 0;
-int purpleGiant_vgl = 0;
-int purpleTall_vgl = 10;
-int purpleMid_vgl = 7;
+int purpleGiant_vgl = 6;
+int purpleTall_vgl = 5;
+int purpleMid_vgl = 6;
 int purpleManlet_vgl = 6;
 
 int heightColossal_vgl = 210;
-int heightGiant_vgl = 194;
+int heightGiant_vgl = 190;
 int heightTall_vgl = 185;
 int heightTallGK_vgl = 189;
 int heightMid_vgl = 180;
 int heightManlet_vgl = 175;
+
+int freeCardOne_vgl = 9;
+
+bool canMedalsBeGiant_vgl = false;
+bool canGKBeGiant_vgl = false;
 
 int numGK_vgl = 0;
 //Count of player ratings
@@ -1023,6 +1029,11 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
                     cardMod++;
                 }
 
+                if (jj == freeCardOne_vgl) 
+                {
+                    cardMod++;
+                }
+
                 //Trick cards may be free, count number
                 //if(jj<6 || jj==16 || jj==28 || jj==29 || jj==30 || jj==34)
                 if (jj < 6 || jj == 16 || jj == 21 || jj == 28 || jj == 29 || jj == 30 || jj == 34) //<- this is for PES19
@@ -1074,6 +1085,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
             errorTot++;
             errorMsg << _T("Illegal height (") << player.height << _T(" cm); ");
         }
+
+        if ((!canGKBeGiant_vgl) && player.height == heightGiant_vgl && player.reg_pos == 0) 
+        {
+            errorTot++;
+            errorMsg << _T("Goalkeeper can't be ") << heightGiant_vgl << _T(";");
+        }
+
 
         if (player.age < 15 || player.age>50)
         {
@@ -1212,6 +1230,12 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
                 manlets_without_bonus.push_back(player);
             }
 
+            if ((player.height <= heightManlet_vgl && rating < targetRate + manletBonus_vgl) && useSuggestions)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << rating << _T(" rating, can be ") << targetRate + manletBonus_vgl << _T("]; ");
+            }
+
             if (rating != targetRate)
             {
                 if (rating == targetRate + manletBonus_vgl && player.height <= heightManlet_vgl)
@@ -1239,6 +1263,12 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
             numSilver_vgl++;
             targetRate = silverRate_vgl;
             targetRate2 = silverRate_vgl;
+
+            if ((!canMedalsBeGiant_vgl) && player.height == heightGiant_vgl)
+            {
+                errorTot++;
+                errorMsg << _T("Medal players can't be ") << heightGiant_vgl << _T(";");
+            }
 
             /*if(player.weak_use+1 != 4)
             {
@@ -1288,6 +1318,11 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
                 usingPurple = true;
                 targetRate += silverManletBonus_vgl;
                 targetRate2 += silverManletBonus_vgl;
+            }
+            else if ((player.height <= heightManlet_vgl && rating < targetRate + silverManletBonus_vgl) && useSuggestions)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << rating << _T(" rating, can be ") << targetRate + silverManletBonus_vgl << _T("]; ");
             }
             if (isManlet) {
                 if (countA > manletA_vgl) {
@@ -1351,6 +1386,12 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
             targetRate = goldRate_vgl;
             targetRate2 = goldRate_vgl;
 
+            if ((!canMedalsBeGiant_vgl) && player.height == heightGiant_vgl)
+            {
+                errorTot++;
+                errorMsg << _T("Medal players can't be ") << heightGiant_vgl << _T(";");
+            }
+
             /*if(player.weak_use+1 != 4)
             {
                 errorTot++;
@@ -1392,6 +1433,17 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
             {
                 targetRate -= goldGiantPen_vgl;
                 targetRate2 -= goldGiantPen_vgl;
+            }
+            else if (player.height <= heightManlet_vgl && rating == targetRate + goldManletBonus_vgl)
+            {
+                usingPurple = true;
+                targetRate += goldManletBonus_vgl;
+                targetRate2 += goldManletBonus_vgl;
+            }
+            else if ((player.height <= heightManlet_vgl && rating < targetRate + goldManletBonus_vgl) && useSuggestions)
+            {
+                suggestionTot++;
+                suggestionMsg << _T("[Has ") << rating << _T(" rating, can be ") << targetRate + goldManletBonus_vgl << _T("]; ");
             }
 
             if (isManlet) {
