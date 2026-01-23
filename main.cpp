@@ -8,6 +8,7 @@
 #include <Windows.h>
 #pragma comment(lib, "Winmm.lib")
 #include <mmsystem.h>
+#include "stats.h"
 
 //----------------------------------------------------------------------
 /*Function prototypes*/
@@ -887,6 +888,31 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					if(HIWORD(W)==BN_CLICKED)
 					{
 						if (vglmode) {
+
+							using namespace gold; //use gold stats only
+							int ii;
+							for (ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							{
+								if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
+								}
+								else //stat is changed
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
+								}
+
+							}
+							CheckDlgButton(ghw_tab1, IDB_SKIL_MALI, BST_CHECKED); //set malicia to on
+
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)std::to_wstring(form).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
+
+							SendDlgItemMessage(ghw_main, IDT_PLAY_HGT, WM_SETTEXT, 0, (LPARAM)std::to_wstring(height).c_str());;
+
+							/*
 							_itow_s(goldRate_vgl, buffer, 3, 10);
 							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
 								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
@@ -902,6 +928,8 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 
 							_itow_s(goldWeakFoot_vgl, buffer, 3, 10);
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+							*/
+
 						}
 						else {
 							_itow_s(goldRate, buffer, 3, 10);
@@ -945,6 +973,33 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					if(HIWORD(W)==BN_CLICKED)
 					{
 						if (vglmode) {
+
+							using namespace silver; //use silver stats only
+							int ii;
+
+							for (ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							{
+								if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
+								}
+								else //stat is changed
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
+								}
+
+							}
+
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)std::to_wstring(form).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
+
+							SendDlgItemMessage(ghw_main, IDT_PLAY_HGT, WM_SETTEXT, 0, (LPARAM)std::to_wstring(height).c_str());
+
+							Button_SetCheck(GetDlgItem(ghw_tab1, IDB_SKIL_LTHR), 0);
+
+							/*
 							_itow_s(silverRate_vgl, buffer, 3, 10);
 							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
 								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
@@ -960,6 +1015,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 
 							_itow_s(silverWeakFoot_vgl, buffer, 3, 10);
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+							*/
 						}
 						else {
 							_itow_s(silverRate, buffer, 3, 10);
@@ -1000,13 +1056,147 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					}
 				}
 				break;
+				case IDB_MAKE_BRON:
+				{
+					if (HIWORD(W) == BN_CLICKED)
+					{
+
+						if (vglmode) {
+							using namespace bronze; //use silver stats only
+							int ii;
+
+							for (ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							{
+								if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
+								}
+								else //stat is changed
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
+								}
+
+							}
+
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)std::to_wstring(form).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
+
+							SendDlgItemMessage(ghw_main, IDT_PLAY_HGT, WM_SETTEXT, 0, (LPARAM)std::to_wstring(height).c_str());
+
+							Button_SetCheck(GetDlgItem(ghw_tab1, IDB_SKIL_LTHR), 0);
+						}
+						else {
+							//if(ii==IDT_ABIL_DEFP || ii==IDT_ABIL_BWIN || ii==IDT_ABIL_EXPL) //Nerf Defensive Prowess, Ball winning and Explosive power to 72
+//	SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
+
+							_itow_s(regRate, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regForm, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regIR, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regWeakFootUse, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regWeakFootAcc, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
+					}
+				}
+				break;
+				case IDB_MAKE_BUFF:
+				{
+					if (HIWORD(W) == BN_CLICKED)
+					{
+
+						if (vglmode) {
+							using namespace buffed; //use silver stats only
+							int ii;
+
+							for (ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							{
+								if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
+								}
+								else //stat is changed
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
+								}
+
+							}
+
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)std::to_wstring(form).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
+
+							SendDlgItemMessage(ghw_main, IDT_PLAY_HGT, WM_SETTEXT, 0, (LPARAM)std::to_wstring(height).c_str());
+
+							Button_SetCheck(GetDlgItem(ghw_tab1, IDB_SKIL_LTHR), 0);
+						}
+						else {
+							//if(ii==IDT_ABIL_DEFP || ii==IDT_ABIL_BWIN || ii==IDT_ABIL_EXPL) //Nerf Defensive Prowess, Ball winning and Explosive power to 72
+//	SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)_T("77"));
+
+							_itow_s(regRate, buffer, 3, 10);
+							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regForm, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regIR, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regWeakFootUse, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
+
+							_itow_s(regWeakFootAcc, buffer, 3, 10);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+						}
+					}
+				}
+				break;
 				case IDB_MAKE_REGU:
 				{
 					if(HIWORD(W)==BN_CLICKED)
 					{
 
 						if (vglmode) {
-							_itow_s(regRate_vgl, buffer, 3, 10);
+
+							using namespace nm; //use silver stats only
+							int ii;
+
+							for (ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
+							{
+								if (stat_array[(ii - IDT_ABIL_ATKP) / 2] == 0) //stat is not changed from base stat value
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(base_stat).c_str());
+								}
+								else //stat is changed
+								{
+									SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)std::to_wstring(stat_array[(ii - IDT_ABIL_ATKP) / 2]).c_str());
+								}
+
+							}
+
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)std::to_wstring(form).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_usage).c_str());
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)std::to_wstring(weak_foot_accuracy).c_str());
+
+							SendDlgItemMessage(ghw_main, IDT_PLAY_HGT, WM_SETTEXT, 0, (LPARAM)std::to_wstring(height).c_str());
+
+							Button_SetCheck(GetDlgItem(ghw_tab1, IDB_SKIL_LTHR), 0);
+
+							/*_itow_s(regRate_vgl, buffer, 3, 10);
 							for (int ii = IDT_ABIL_ATKP; ii < gi_lastAbility; ii += 2)
 								SendDlgItemMessage(ghw_tab1, ii, WM_SETTEXT, 0, (LPARAM)buffer);
 
@@ -1020,7 +1210,7 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKUS, WM_SETTEXT, 0, (LPARAM)buffer);
 
 							_itow_s(regWeakFoot_vgl, buffer, 3, 10);
-							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);
+							SendDlgItemMessage(ghw_tab1, IDT_ABIL_WKAC, WM_SETTEXT, 0, (LPARAM)buffer);*/
 						}
 						else {
 							//if(ii==IDT_ABIL_DEFP || ii==IDT_ABIL_BWIN || ii==IDT_ABIL_EXPL) //Nerf Defensive Prowess, Ball winning and Explosive power to 72

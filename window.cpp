@@ -40,37 +40,47 @@ void setup_main(HWND H)
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Gold Medal"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		20, 520, 170, 26, H, (HMENU)IDB_MAKE_GOLD, GetModuleHandle(NULL), NULL);	
+		20, 505, 170, 26, H, (HMENU)IDB_MAKE_GOLD, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Add Color"),
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-		200, 520, 70, 26, H, (HMENU)IDB_MAKE_GOLD_COLOR, GetModuleHandle(NULL), NULL);
+		200, 505, 70, 26, H, (HMENU)IDB_MAKE_GOLD_COLOR, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Silver Medal"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, //| WS_DISABLED 
-		20, 552, 170, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
+		20, 537, 170, 26, H, (HMENU)IDB_MAKE_SILV, GetModuleHandle(NULL), NULL);	
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Add Color"),
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-		200, 552, 70, 26, H, (HMENU)IDB_MAKE_SILV_COLOR, GetModuleHandle(NULL), NULL);
+		200, 537, 70, 26, H, (HMENU)IDB_MAKE_SILV_COLOR, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Regular"), 
-		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		20, 584, 110, 26, H, (HMENU)IDB_MAKE_REGU, GetModuleHandle(NULL), NULL);
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Bronze Medal"),
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, //| WS_DISABLED 
+		20, 569, 170, 26, H, (HMENU)IDB_MAKE_BRON, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Set Stats to:"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Buff"),
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+		20, 601, 70, 26, H, (HMENU)IDB_MAKE_BUFF, GetModuleHandle(NULL), NULL);
+	setup_control(hw_new, ghFont, scale_cntl_proc);
+
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make NM"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		140, 584, 80, 26, H, (HMENU)IDB_SET_STATS, GetModuleHandle(NULL), NULL);
+		100, 601, 70, 26, H, (HMENU)IDB_MAKE_REGU, GetModuleHandle(NULL), NULL);
+	setup_control(hw_new, ghFont, scale_cntl_proc);
+
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Stats:"), 
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
+		180, 601, 40, 26, H, (HMENU)IDB_SET_STATS, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), 
 		ES_NUMBER | ES_AUTOHSCROLL | WS_TABSTOP | WS_CHILD | WS_VISIBLE, 
-		230, 585, 40, 23, H, (HMENU)IDT_SET_STATS, GetModuleHandle(NULL), NULL);
+		230, 603, 40, 23, H, (HMENU)IDT_SET_STATS, GetModuleHandle(NULL), NULL);
 	hw_bud = CreateWindowEx(WS_EX_CLIENTEDGE, _T("msctls_updown32"), _T(""), 
 		UDS_AUTOBUDDY|UDS_SETBUDDYINT|UDS_ALIGNRIGHT|UDS_ARROWKEYS | WS_CHILD | WS_VISIBLE, 
 		0, 0, 0, 0, H, (HMENU)IDC_SET_STATS, GetModuleHandle(NULL), NULL);
