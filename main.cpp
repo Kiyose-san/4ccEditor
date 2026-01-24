@@ -918,7 +918,6 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 								}
 
 							}
-							CheckDlgButton(ghw_tab1, IDB_SKIL_MALI, BST_CHECKED); //set malicia to on
 
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_FORM, WM_SETTEXT, 0, (LPARAM)std::to_wstring(form).c_str());
 							SendDlgItemMessage(ghw_tab1, IDT_ABIL_INJU, WM_SETTEXT, 0, (LPARAM)std::to_wstring(injury_resistance).c_str());
