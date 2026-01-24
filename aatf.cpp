@@ -45,11 +45,11 @@ int regPosToPlayPosMap[13] = { 12, 9, 10, 11, 5, 6, 7, 8, 4, 2, 3, 1, 0 };
 int manletBonus = 5;
 int silverManletBonus = 0;
 int goldManletBonus = 0;
-int silverGiantPen = 4;
+int silverGiantPen = 0;
 int goldGiantPen = 0;
 
 int goldRate = 99; //Player skill ratings
-int silverRate = 92;
+int silverRate = 88;
 int regRate = 77;
 int gkRate = 77;
 
@@ -64,12 +64,12 @@ int goldIR = 3; //Injury resistence (possible range 1-3)
 int silverIR = 3;
 int regIR = 1;
 
-int goldWeakFootUse = 4; //Gold medal weak foot usage limit
-int silverWeakFootUse = 4;
+int goldWeakFootUse = 2; //Gold medal weak foot usage limit
+int silverWeakFootUse = 2;
 int regWeakFootUse = 2;
 
-int goldWeakFootAcc = 2; //Gold medal weak foot accuracy limit
-int silverWeakFootAcc = 2;
+int goldWeakFootAcc = 4; //Gold medal weak foot accuracy limit
+int silverWeakFootAcc = 4;
 int regWeakFootAcc = 2;
 
 int manletCardBonus = 1; //Manlets get 1 extra card
@@ -92,10 +92,10 @@ int silverCOM = 1;
 int goldCOM = 2;
 
 int greenGiga = 0; //Green height bracket
-int greenGiant = 6;
+int greenGiant = 5;
 int greenTall = 6;
 int greenMid = 6;
-int greenManlet = 5;
+int greenManlet = 6;
 
 int redGiga = 0; //Red height bracket
 int redGiant = 0;
@@ -267,26 +267,29 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		bool hasTrick = false;
 		int targetRate = 0, targetRate2 = 0, targetRate3 = 0;
 		int rating = player.drib;
-		rating = max(player.gk, rating);
-		rating = max(player.finish, rating);
-		rating = max(player.lowpass, rating);
-		rating = max(player.loftpass, rating);
-		rating = max(player.header, rating);
-		rating = max(player.swerve, rating);
-		rating = max(player.catching, rating);
-		rating = max(player.clearing, rating);
-		rating = max(player.reflex, rating);
-		rating = max(player.body_ctrl, rating);
-		if (pesVersion > 16) rating = max(player.phys_cont, rating); //Not in 16
-		rating = max(player.kick_pwr, rating);
-		rating = max(player.exp_pwr, rating);
-		rating = max(player.ball_ctrl, rating);
-		rating = max(player.ball_win, rating);
-		rating = max(player.jump, rating);
-		rating = max(player.cover, rating);
-		rating = max(player.place_kick, rating);
-		rating = max(player.stamina, rating);
-		rating = max(player.speed, rating);
+        rating = max(player.gk, rating);
+        rating = max(player.finish, rating);
+        rating = max(player.lowpass, rating);
+        rating = max(player.loftpass, rating);
+        rating = max(player.header, rating);
+        rating = max(player.swerve, rating);
+        rating = max(player.catching, rating);
+		if (pesVersion > 15)
+		{
+			rating = max(player.clearing, rating);
+			rating = max(player.reflex, rating);
+			rating = max(player.cover, rating);
+		}
+        rating = max(player.body_ctrl, rating);
+        if (pesVersion > 16) rating = max(player.phys_cont, rating); //Not in 16
+        rating = max(player.kick_pwr, rating);
+        rating = max(player.exp_pwr, rating);
+        rating = max(player.ball_ctrl, rating);
+        rating = max(player.ball_win, rating);
+        rating = max(player.jump, rating);
+        rating = max(player.place_kick, rating);
+        rating = max(player.stamina, rating);
+        rating = max(player.speed, rating);
 		if (pesVersion > 19) rating = max(player.aggres, rating);
 
 		/*if(player.injury+1 > 3)
@@ -310,17 +313,28 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		if (player.reg_pos == 0) numGK++;
 
 		//Count A positions
-		int countA = 0;
-		for (int jj = 0; jj < 13; jj++)
-		{
-			if (player.play_pos[jj] > 0)
+        int countA = 0;
+		int countB = 0;
+        for(int jj=0;jj<13;jj++)
+        {
+            if(player.play_pos[jj] == 2)
 				countA++;
+			else if (player.play_pos[jj] == 1)
+				countB++;
+        }
+
+		//No B positions allowed:
+		if(countB > 0)
+		{
+			errorTot++;
+			errorMsg << _T("Has B position; ");
 		}
 
-		//If more than 1 A, 1 card less for each
-		if (countA > 1)
-		{
-			if (player.play_pos[12] == 2) //Can't have GK as second A
+
+        //If more than 1 A, 1 card less for each
+        if(countA > 1)
+        {
+            if(player.play_pos[12] == 2) //Can't have GK as second A
 			{
 				errorTot++;
 				errorMsg << _T("Has GK as second A position; ");
@@ -372,6 +386,38 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 		{
 			errorTot++;
 			errorMsg << _T("Weight out of range (") << max(30, player.height - 129) << _T(",") << player.height - 81 << _T("); ");
+		}
+
+		//Check playing style and registered position are in valid range per PES version
+		if (player.reg_pos > 12) 
+		{
+			errorTot++;
+			errorMsg << _T("Registered position out of range (0-12); ");
+		}
+
+		if (pesVersion <= 16)
+		{
+			if (player.play_style > 18 || player.play_style == 16)
+			{
+				errorTot++;
+				errorMsg << _T("Playing style out of range (0-18, excluding 16); ");
+			}
+		}
+		else if (pesVersion > 16 && pesVersion < 19)
+		{
+			if (player.play_style > 17) 
+			{
+				errorTot++;
+				errorMsg << _T("Playing style out of range (0-17); ");
+			}
+		}
+		else
+		{
+			if (player.play_style > 21) 
+			{
+				errorTot++;
+				errorMsg << _T("Playing style out of range (0-21); ");
+			}
 		}
 
 		/* REGULAR */
@@ -546,7 +592,14 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 				if (numCom < silverCOM) errorMsg << _T("WARN: Has ") << numCom << _T(" COM cards, allowed ") << silverCOM << _T("; ");
 				if (player.injury + 1 < silverIR) errorMsg << _T("WARN: Has inj resist") << player.injury + 1 << _T(", allowed ") << silverIR << _T("; ");
 			}
-		}
+
+			//SPECIAL FAG13: Medals can trade a card for 4/4 footedness
+			/*if (player.weak_use + 1 > weakFootUse)
+			{
+				weakFootUse = 4;
+				cardLimit--;
+			}*/
+        }
 		/* GOLD */
 		else //rating == 99 //Gold player
 		{
@@ -616,6 +669,13 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 			{
 				errorMsg << _T("Gold medal heights cannot be ") << heightGiant << _T("cm; ");
 			}
+
+			//SPECIAL FAG13: Medals can trade a card for 4/4 footedness
+			/*if (player.weak_use + 1 > weakFootUse)
+			{
+				weakFootUse = 4;
+				cardLimit--;
+			}*/
 		}
 
 		//Check player height
@@ -673,9 +733,9 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 		if (eCheck)
 		{
-			if (cardCount < min(cardLimit, 10)) errorMsg << _T("WARN: Has ") << cardCount << _T(" cards, allowed ") << cardLimit << _T("; ");
-			if (player.weak_use + 1 < weakFootUse) errorMsg << _T("WARN: Has weak usage") << player.weak_use + 1 << _T(", allowed ") << weakFootUse << _T("; ");
-			if (player.weak_acc + 1 < weakFootAcc) errorMsg << _T("WARN: Has weak accuracy") << player.weak_acc + 1 << _T(", allowed ") << weakFootAcc << _T("; ");
+			if (cardCount < min(cardLimit,10)) errorMsg << _T("WARN: Has ") << cardCount << _T(" cards, allowed ") << cardLimit << _T("; ");
+			if (player.weak_use + 1 < weakFootUse) errorMsg << _T("WARN: Has weak usage ") << player.weak_use + 1 << _T(", allowed ") << weakFootUse << _T("; ");
+			if (player.weak_acc + 1 < weakFootAcc) errorMsg << _T("WARN: Has weak accuracy ") << player.weak_acc + 1 << _T(", allowed ") << weakFootAcc << _T("; ");
 		}
 
 		//Check player overall rating
@@ -695,8 +755,8 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 										{player.header,		_T("Header"),				0,		targetRate	},
 										{player.swerve,		_T("Swerve"),				0,		targetRate	},
 										{player.catching,	_T("Catching"),				0,		targetRate	},
-										{player.clearing,	_T("Clearing"),				0,		targetRate	},
-										{player.reflex,		_T("Reflexes"),				0,		targetRate	},
+										{player.clearing,	_T("Clearing"),				16,		targetRate	},
+										{player.reflex,		_T("Reflexes"),				16,		targetRate	},
 										{player.body_ctrl,	_T("Body Control"),			0,		targetRate	},
 										{player.phys_cont,	_T("Physical Contact"),		17,		targetRate	},
 										{player.kick_pwr,	_T("Kicking Power"),		0,		targetRate	},
@@ -704,7 +764,7 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 										{player.ball_ctrl,	_T("Ball Control"),			0,		targetRate	},
 										{player.ball_win,	_T("Ball Winning"),			0,		targetRate	},
 										{player.jump,		_T("Jump"),					0,		targetRate	},
-										{player.cover,		_T("Coverage"),				0,		targetRate	},
+										{player.cover,		_T("Coverage"),				16,		targetRate	},
 										{player.place_kick, _T("Place Kicking"),		0,		targetRate	},
 										{player.stamina,	_T("Stamina"),				0,		targetRate3	},
 										{player.speed,		_T("Speed"),				0,		targetRate	},
@@ -715,7 +775,17 @@ void aatf_single(HWND hAatfbox, int pesVersion, int teamSel, player_entry* gplay
 
 		for (int ii = 0; ii < 25; ii++)
 		{
-			if (skillChecks[ii].n_minPesVersion <= pesVersion && skillChecks[ii].c_skillRate != skillChecks[ii].n_targetRate)
+			//atk and def can be lower than the target rate
+			if (skillChecks[ii].s_skillName == _T("Attacking Prowess") || skillChecks[ii].s_skillName == _T("Defensive Prowess"))
+			{
+				if (skillChecks[ii].n_minPesVersion <= pesVersion && skillChecks[ii].c_skillRate > skillChecks[ii].n_targetRate)
+				{
+					errorTot++;
+					errorMsg << skillChecks[ii].s_skillName << _T(" is ") << skillChecks[ii].c_skillRate << _T(", should be <= ") << skillChecks[ii].n_targetRate << _T("; ");
+				}
+			}
+			else if (skillChecks[ii].n_minPesVersion <= pesVersion && 
+				     skillChecks[ii].c_skillRate != skillChecks[ii].n_targetRate)
 			{
 				errorTot++;
 				errorMsg << skillChecks[ii].s_skillName << _T(" is ") << skillChecks[ii].c_skillRate << _T(", should be ") << skillChecks[ii].n_targetRate << _T("; ");
