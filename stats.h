@@ -174,15 +174,15 @@ namespace nm { //nm (nonbuffed) stats
 namespace buffed { //buffed player stats
 	const int count = 8; //number of this type of player allowed
 	const int form = 3;
-	const int gk_form = 8;
 	const int injury_resistance = 1;
 	const int weak_foot_usage = 4;
+	const int weak_foot_usage_debuff = 2; //Under certain circumstances, weak foot must be this
 	const int weak_foot_accuracy = 4;
 	const int height = 188;
-	const int gk_height = 193;
 	const int skills = 7; //max number of non free skills allowed
 	const int free_coms = 1; //free coms allowed
 	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
+	
 
 	const int base_stat = 77; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
 	const int offensive_awareness = 92;

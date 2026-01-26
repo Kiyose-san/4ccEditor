@@ -586,6 +586,14 @@ struct team_entry
 	bool b_changed;
 	bool b_show;
 
+	int ManMarking1[11];
+	int ManMarking2[11];
+	int ManMarking3[11];
+
+	int AutoSub;
+	int AutoOffside;
+	int AutoPresetTactics;
+
 	//Constructor
 	team_entry()
 	{
