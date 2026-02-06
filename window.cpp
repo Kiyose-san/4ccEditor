@@ -63,6 +63,11 @@ void setup_main(HWND H)
 		20, 569, 170, 26, H, (HMENU)IDB_MAKE_BRON, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Add Color"),
+		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
+		200, 569, 70, 26, H, (HMENU)IDB_MAKE_BRON_COLOR, GetModuleHandle(NULL), NULL);
+	setup_control(hw_new, ghFont, scale_cntl_proc);
+
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Buff"),
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
 		20, 601, 70, 26, H, (HMENU)IDB_MAKE_BUFF, GetModuleHandle(NULL), NULL);

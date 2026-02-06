@@ -1070,6 +1070,24 @@ LRESULT CALLBACK wnd_proc(HWND H, UINT M, WPARAM W, LPARAM L)
 					}
 				}
 				break;
+				case IDB_MAKE_BRON_COLOR:
+				{
+					if (HIWORD(W) == BN_CLICKED)
+					{
+						wchar_t oldName[0x1000];
+						wchar_t newName[0x1000];
+
+						SendDlgItemMessage(ghw_main, IDT_PLAY_NAME, WM_GETTEXT, (WPARAM)(sizeof(oldName) / sizeof(oldName[0])), (LPARAM)oldName);
+
+						newName[0] = 0;
+						wcscat(newName, L"c8b5f55ff");
+
+						wcscat(newName, oldName);
+
+						SendDlgItemMessage(ghw_main, IDT_PLAY_NAME, WM_SETTEXT, 0, (LPARAM)newName);
+					}
+				}
+				break;
 				case IDB_MAKE_BRON:
 				{
 					if (HIWORD(W) == BN_CLICKED)
