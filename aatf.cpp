@@ -2356,12 +2356,12 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 		}*/
 
 		//Check weak foot ratings
-		if (player.weak_use + 1 != weakFoot)
+		if (player.weak_use + 1 > weakFoot)
 		{
 			errorTot++;
 			errorMsg << _T("Weak foot usage > ") << weakFoot << _T("; ");
 		}
-		if (player.weak_acc + 1 != weakFoot)
+		if (player.weak_acc + 1 > weakFoot)
 		{
 			errorTot++;
 			errorMsg << _T("Weak foot accuracy > ") << weakFoot << _T("; ");
