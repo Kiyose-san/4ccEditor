@@ -1,3 +1,11 @@
+// Players with Registered Position of GK 72 OVR
+// REMOVE: Nonmedals in the buffed player section may have the Weighted Pass and One-Touch Pass cards for free
+// REMOVE: Players in the buffed player bracket with a Playable Position of LB, RB, CMF, or DMF have 2/2 Footedness. All other players have 4/4 Footedness.
+// DOUBLE CHECK: GK height must be 185, not 183
+// ADD: Captain gains free card on top of captaincy
+// REMOVE: Players may have the First-Time Shot and Acrobatic Finishing skill cards for free
+// REMOVE: Players may have the Long Ranger and Incisive Run COM Styles for free
+
 #pragma once
 //this file is meant to make updating the editor for stat changes exceedingly simple.
 //stats use pes21 names
@@ -9,7 +17,7 @@ namespace gold { //gold stats
 	const int injury_resistance = 2;
 	const int weak_foot_usage = 4;
 	const int weak_foot_accuracy = 4;
-	const int height = 193;
+	const int height = 195;
 	const int skills = 8; //max number of non free skills allowed
 	const int free_coms = 2; //free coms allowed
 	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
@@ -21,11 +29,11 @@ namespace gold { //gold stats
 	const int low_pass = 0;
 	const int lofted_pass = 0;
 	const int finishing = 0;
-	const int place_kicking = 96;
+	const int place_kicking = 94;
 	const int curl = 0;
 	const int header = 0;
-	const int defensive_awareness = 58;
-	const int ball_winning = 0;
+	const int defensive_awareness = 60;
+	const int ball_winning = 94;
 	const int kicking_power = 0;
 	const int speed = 0;
 	const int acceleration = 0;
@@ -56,17 +64,17 @@ namespace silver { //silver stats
 	const int free_coms = 2; //free coms allowed
 	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
 
-	const int base_stat = 93; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
-	const int offensive_awareness = 96;
+	const int base_stat = 94; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
+	const int offensive_awareness = 99;
 	const int ball_control = 0;
 	const int dribbling = 0;
 	const int low_pass = 0;
 	const int lofted_pass = 0;
-	const int finishing = 0;
+	const int finishing = 99;
 	const int place_kicking = 89;
 	const int curl = 0;
-	const int header = 91;
-	const int defensive_awareness = 56;
+	const int header = 99;
+	const int defensive_awareness = 60;
 	const int ball_winning = 89;
 	const int kicking_power = 0;
 	const int speed = 0;
@@ -74,14 +82,14 @@ namespace silver { //silver stats
 	const int balance = 0;
 	const int physical_contact = 0;
 	const int jump = 0;
-	const int stamina = 96;
+	const int stamina = 0;
 	const int gk_awareness = 0;
 	const int catching = 0;
 	const int clearing = 0;
 	const int reflexes = 0;
 	const int gk_reach = 0;
 	const int tight_possession = 0;
-	const int aggression = 89;
+	const int aggression = 0;
 	const int stat_array[] = { offensive_awareness, ball_control, dribbling, low_pass, lofted_pass, finishing, place_kicking, curl, header, defensive_awareness,
 		ball_winning, kicking_power, speed, acceleration, balance, physical_contact, jump, stamina, gk_awareness, catching, clearing, reflexes, gk_reach,
 		tight_possession, aggression };
@@ -92,80 +100,37 @@ namespace bronze { //bronze stats
 	const int injury_resistance = 2;
 	const int weak_foot_usage = 4;
 	const int weak_foot_accuracy = 4;
-	const int height = 195;
+	const int height = 190;
 	const int skills = 8; //max number of non free skills allowed
 	const int free_coms = 2; //free coms allowed
 	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
 
 	const int base_stat = 89; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
-	const int offensive_awareness = 92;
+	const int offensive_awareness = 94;
 	const int ball_control = 0;
 	const int dribbling = 0;
 	const int low_pass = 0;
 	const int lofted_pass = 0;
-	const int finishing = 0;
-	const int place_kicking = 85;
+	const int finishing = 94;
+	const int place_kicking = 84;
 	const int curl = 0;
-	const int header = 87;
-	const int defensive_awareness = 52;
-	const int ball_winning = 85;
+	const int header = 94;
+	const int defensive_awareness = 60;
+	const int ball_winning = 84;
 	const int kicking_power = 0;
 	const int speed = 0;
 	const int acceleration = 0;
 	const int balance = 0;
 	const int physical_contact = 0;
 	const int jump = 0;
-	const int stamina = 92;
+	const int stamina = 0;
 	const int gk_awareness = 0;
 	const int catching = 0;
 	const int clearing = 0;
 	const int reflexes = 0;
 	const int gk_reach = 0;
 	const int tight_possession = 0;
-	const int aggression = 85;
-	const int stat_array[] = { offensive_awareness, ball_control, dribbling, low_pass, lofted_pass, finishing, place_kicking, curl, header, defensive_awareness,
-		ball_winning, kicking_power, speed, acceleration, balance, physical_contact, jump, stamina, gk_awareness, catching, clearing, reflexes, gk_reach,
-		tight_possession, aggression };
-}
-namespace nm { //nm (nonbuffed) stats
-	const int count = 10; //number of this type of player allowed
-	const int form = 4;
-	const int gk_form = 8;
-	const int injury_resistance = 1;
-	const int weak_foot_usage = 4;
-	const int weak_foot_accuracy = 4;
-	const int height = 178;
-	const int gk_height = 183;
-	const int skills = 7; //max number of non free skills allowed
-	const int free_coms = 1; //free coms allowed
-	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
-
-	const int base_stat = 77; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
-	const int offensive_awareness = 87;
-	const int ball_control = 87;
-	const int dribbling = 87;
-	const int low_pass = 87;
-	const int lofted_pass = 87;
-	const int finishing = 99;
-	const int place_kicking = 70;
-	const int curl = 87;
-	const int header = 0;
-	const int defensive_awareness = 73;
-	const int ball_winning = 68;
-	const int kicking_power = 87;
-	const int speed = 0;
-	const int acceleration = 72;
-	const int balance = 0;
-	const int physical_contact = 67;
-	const int jump = 67;
-	const int stamina = 55;
-	const int gk_awareness = 75;
-	const int catching = 70;
-	const int clearing = 0;
-	const int reflexes = 73;
-	const int gk_reach = 75;
-	const int tight_possession = 87;
-	const int aggression = 90;
+	const int aggression = 0;
 	const int stat_array[] = { offensive_awareness, ball_control, dribbling, low_pass, lofted_pass, finishing, place_kicking, curl, header, defensive_awareness,
 		ball_winning, kicking_power, speed, acceleration, balance, physical_contact, jump, stamina, gk_awareness, catching, clearing, reflexes, gk_reach,
 		tight_possession, aggression };
@@ -173,43 +138,88 @@ namespace nm { //nm (nonbuffed) stats
 
 namespace buffed { //buffed player stats
 	const int count = 8; //number of this type of player allowed
-	const int form = 3;
+	const int form = 4;
 	const int injury_resistance = 1;
 	const int weak_foot_usage = 4;
 	const int weak_foot_usage_debuff = 2; //Under certain circumstances, weak foot must be this
 	const int weak_foot_accuracy = 4;
-	const int height = 188;
+	const int height = 185;
 	const int skills = 7; //max number of non free skills allowed
 	const int free_coms = 1; //free coms allowed
 	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
-	
 
-	const int base_stat = 77; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
-	const int offensive_awareness = 92;
-	const int ball_control = 87;
-	const int dribbling = 90;
-	const int low_pass = 87;
-	const int lofted_pass = 87;
-	const int finishing = 90;
-	const int place_kicking = 70;
-	const int curl = 87;
+
+	const int base_stat = 85; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
+	const int offensive_awareness = 90;
+	const int ball_control = 0;
+	const int dribbling = 0;
+	const int low_pass = 0;
+	const int lofted_pass = 0;
+	const int finishing = 0;
+	const int place_kicking = 0;
+	const int curl = 0;
 	const int header = 0;
-	const int defensive_awareness = 53;
-	const int ball_winning = 68;
-	const int kicking_power = 90;
-	const int speed = 88;
-	const int acceleration = 88;
-	const int balance = 88;
-	const int physical_contact = 88;
-	const int jump = 67;
-	const int stamina = 61;
-	const int gk_awareness = 75;
-	const int catching = 70;
+	const int defensive_awareness = 60;
+	const int ball_winning = 60;
+	const int kicking_power = 0;
+	const int speed = 0;
+	const int acceleration = 0;
+	const int balance = 0;
+	const int physical_contact = 0;
+	const int jump = 75;
+	const int stamina = 70;
+	const int gk_awareness = 0;
+	const int catching = 0;
 	const int clearing = 0;
-	const int reflexes = 73;
-	const int gk_reach = 75;
-	const int tight_possession = 87;
-	const int aggression = 87;
+	const int reflexes = 0;
+	const int gk_reach = 0;
+	const int tight_possession = 0;
+	const int aggression = 90;
+	const int stat_array[] = { offensive_awareness, ball_control, dribbling, low_pass, lofted_pass, finishing, place_kicking, curl, header, defensive_awareness,
+		ball_winning, kicking_power, speed, acceleration, balance, physical_contact, jump, stamina, gk_awareness, catching, clearing, reflexes, gk_reach,
+		tight_possession, aggression };
+}
+
+namespace regular { //nm (nonbuffed) stats
+	const int count = 10; //number of this type of player allowed
+	const int form = 4;
+	const int gk_form = 8;
+	const int injury_resistance = 1;
+	const int weak_foot_usage = 4;
+	const int weak_foot_accuracy = 4;
+	const int height = 180;
+	const int gk_height = 185;
+	const int skills = 7; //max number of non free skills allowed
+	const int free_coms = 1; //free coms allowed
+	const int free_a = 2; //free a positions allowed, note this includes the A position that a registered position gives
+
+	const int base_stat = 80; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
+	const int gk_base_stat = 72; //GK base stat value used if no changes. if a stat below is set at 0, this value will be used.
+	const int offensive_awareness = 0;
+	const int ball_control = 0;
+	const int dribbling = 0;
+	const int low_pass = 0;
+	const int lofted_pass = 0;
+	const int finishing = 0;
+	const int place_kicking = 0;
+	const int curl = 0;
+	const int header = 0;
+	const int defensive_awareness = 70;
+	const int ball_winning = 70;
+	const int kicking_power = 0;
+	const int speed = 0;
+	const int acceleration = 70;
+	const int balance = 0;
+	const int physical_contact = 0;
+	const int jump = 70;
+	const int stamina = 65;
+	const int gk_awareness = 72;
+	const int catching = 72;
+	const int clearing = 72;
+	const int reflexes = 72;
+	const int gk_reach = 72;
+	const int tight_possession = 0;
+	const int aggression = 90;
 	const int stat_array[] = { offensive_awareness, ball_control, dribbling, low_pass, lofted_pass, finishing, place_kicking, curl, header, defensive_awareness,
 		ball_winning, kicking_power, speed, acceleration, balance, physical_contact, jump, stamina, gk_awareness, catching, clearing, reflexes, gk_reach,
 		tight_possession, aggression };

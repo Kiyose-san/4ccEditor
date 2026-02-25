@@ -1086,7 +1086,8 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 		bool hasTrick = false;
 		bool hasTrickCom = false;
 		int targetRate = 0;
-		int rating = player.clearing; //this needs to be a stat that isn't changed from base rates
+		int rating = player.speed; //this needs to be a stat that isn't changed from base rates
+
 
 		/*rating = max(player.gk, rating);
 		rating = max(player.finish, rating);
@@ -1135,8 +1136,8 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				countA++;
 		}
 
-		//If more than 1 A, 1 card less for each (Not for VGL)
-		if (countA > 1)
+		//If more than 2 A, 1 card less for each
+		if (countA > 2)
 		{
 			if (player.play_pos[12] == 2) //Can't have GK as second A
 			{
@@ -1220,13 +1221,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				}*/
 
 				// Players may have the First-Time Shot and Acrobatic Finishing skill cards for free
-				if (jj == 11) { //11 = First-Time Shot
+				/*if (jj == 11) { //11 = First-Time Shot
 					cardMod++;
 				}
 
 				if (jj == 9) { //9 = Acrobatic Finishing
 					cardMod++;
-				}
+				}*/
 
 				//Trick cards may be free, count number
 				//if(jj<6 || jj==16 || jj==28 || jj==29 || jj==30 || jj==34)
@@ -1253,13 +1254,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				numCom++;
 
 				//Free COMs
-				if (jj == 3) { //3 = Incisive Run
+				/*if (jj == 3) { //3 = Incisive Run
 					comMod++;
 				}
 
 				if (jj == 6) { //6 = Long Ranger
 					comMod++;
-				}				
+				}*/				
 			}
 		}
 
@@ -1312,16 +1313,25 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 		}
 
 		/* REGULAR */
-		if (player.height == nm::height || player.height == nm::gk_height) //Regular player
+		if ((player.aggres == regular::aggression && player.jump == regular::jump && player.height == regular::height) || (player.height == regular::gk_height && player.reg_pos == 0)) //Regular player
 		{
-			using namespace nm; // all values pulling from the nm namespace
+			using namespace regular; // all values pulling from the nm namespace
 			numReg++;
-			targetRate += base_stat;
+			int used_base_stat = 0;
+			if (player.reg_pos == 0) //player is a gk, use gk stats
+			{
+				used_base_stat = gk_base_stat;
+
+			}
+			else {
+				used_base_stat = base_stat;
+			}
+
+
+			targetRate += used_base_stat;
 			cardMin = regSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
-
-
 
 			//set the targets to the namespace values. note some of these are 0 as they should be base rate
 			targetDrib = dribbling;
@@ -1352,103 +1362,103 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			//fix all the 0 values and make them the base rate
 			if (targetDrib == 0)
 			{
-				targetDrib = base_stat;
+				targetDrib = used_base_stat;
 			}
 			if (targetGk == 0)
 			{
-				targetGk = base_stat;
+				targetGk = used_base_stat;
 			}
 			if (targetFinish == 0)
 			{
-				targetFinish = base_stat;
+				targetFinish = used_base_stat;
 			}
 			if (targetLowpass == 0)
 			{
-				targetLowpass = base_stat;
+				targetLowpass = used_base_stat;
 			}
 			if (targetLoftpass == 0)
 			{
-				targetLoftpass = base_stat;
+				targetLoftpass = used_base_stat;
 			}
 			if (targetHeader == 0)
 			{
-				targetHeader = base_stat;
+				targetHeader = used_base_stat;
 			}
 			if (targetSwerve == 0)
 			{
-				targetSwerve = base_stat;
+				targetSwerve = used_base_stat;
 			}
 			if (targetCatching == 0)
 			{
-				targetCatching = base_stat;
+				targetCatching = used_base_stat;
 			}
 			if (targetClearing == 0)
 			{
-				targetClearing = base_stat;
+				targetClearing = used_base_stat;
 			}
 			if (targetReflex == 0)
 			{
-				targetReflex = base_stat;
+				targetReflex = used_base_stat;
 			}
 			if (targetBody_ctrl == 0)
 			{
-				targetBody_ctrl = base_stat;
+				targetBody_ctrl = used_base_stat;
 			}
 			if (targetPhys_cont == 0)
 			{
-				targetPhys_cont = base_stat;
+				targetPhys_cont = used_base_stat;
 			}
 			if (targetKick_pwr == 0)
 			{
-				targetKick_pwr = base_stat;
+				targetKick_pwr = used_base_stat;
 			}
 			if (targetExp_pwr == 0)
 			{
-				targetExp_pwr = base_stat;
+				targetExp_pwr = used_base_stat;
 			}
 			if (targetBall_ctrl == 0)
 			{
-				targetBall_ctrl = base_stat;
+				targetBall_ctrl = used_base_stat;
 			}
 			if (targetBall_win == 0)
 			{
-				targetBall_win = base_stat;
+				targetBall_win = used_base_stat;
 			}
 			if (targetJump == 0)
 			{
-				targetJump = base_stat;
+				targetJump = used_base_stat;
 			}
 			if (targetCover == 0)
 			{
-				targetCover = base_stat;
+				targetCover = used_base_stat;
 			}
 			if (targetPlace_kick == 0)
 			{
-				targetPlace_kick = base_stat;
+				targetPlace_kick = used_base_stat;
 			}
 			if (targetStamina == 0)
 			{
-				targetStamina = base_stat;
+				targetStamina = used_base_stat;
 			}
 			if (targetSpeed == 0)
 			{
-				targetSpeed = base_stat;
+				targetSpeed = used_base_stat;
 			}
 			if (targetAtk == 0)
 			{
-				targetAtk = base_stat;
+				targetAtk = used_base_stat;
 			}
 			if (targetDef == 0)
 			{
-				targetDef = base_stat;
+				targetDef = used_base_stat;
 			}
 			if (targetTight_pos == 0)
 			{
-				targetTight_pos = base_stat;
+				targetTight_pos = used_base_stat;
 			}
 			if (targetAggres == 0)
 			{
-				targetAggres = base_stat;
+				targetAggres = used_base_stat;
 			}
 
 			freeAPositions = free_a;
@@ -1486,7 +1496,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			//cardMod += min(nm::free_coms, numCom-numTrickCom); 
 			cardMod += numTrick;
 			cardLimit = skills + cardMod;
-			freeCOMs = nm::free_coms + comMod;
+			freeCOMs = regular::free_coms + comMod;
 
 			/*if (numCom > regCOM)
 			{
@@ -1509,7 +1519,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}*/
 		}
 		/* Buffed */
-		else if (player.height == buffed::height) //buffed player
+		else if (player.stamina == buffed::stamina && player.jump == buffed::jump && player.height == buffed::height) //buffed player
 		{
 			using namespace buffed; // all values pulling from the buffed namespace
 			numBuff++;
@@ -1517,10 +1527,10 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			cardMin = regSkillCardsMin;
 
 			weakFoot = weak_foot_usage;
-			if (player.play_pos[10] == 2 || player.play_pos[11] == 2 || player.play_pos[6] == 2 || player.play_pos[5] == 2) //playable at LB, RB, CMF, or DMF
+			/*if (player.play_pos[10] == 2 || player.play_pos[11] == 2 || player.play_pos[6] == 2 || player.play_pos[5] == 2) //playable at LB, RB, CMF, or DMF
 			{
 				weakFoot = weak_foot_usage_debuff;
-			}
+			}*/
 
 			//set the targets to the namespace values. note some of these are 0 as they should be base rate
 			targetDrib = dribbling;
@@ -1693,7 +1703,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				errorMsg << _T("Form is ") << player.form + 1 << _T(", should be ") << form << _T("; ");
 			}
 
-			for (int jj = 0; jj < numSkill; jj++)
+			/*for (int jj = 0; jj < numSkill; jj++)
 			{
 				if (player.play_skill[jj])
 				{
@@ -1706,7 +1716,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 						cardMod++;
 					}
 				}
-			}
+			}*/
 
 
 			/*if (countA > 1)
@@ -1746,7 +1756,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}
 		}
 		/* BRONZE */
-		else if (player.height == bronze::height && player.aggres == bronze::aggression) //Bronze player
+		else if (player.ball_ctrl == bronze::base_stat && player.height == bronze::height) //Bronze player
 		{
 			using namespace bronze; //all stats pulled from bronze namespace
 			isBronze = true;
@@ -1943,7 +1953,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}*/
 		}
 		/* SILVER */
-		else if (player.height == silver::height) //Silver player
+		else if (player.ball_ctrl == silver::base_stat && player.height == silver::height) //Silver player
 		{
 			using namespace silver; //all stats pulled from silver namespace
 			isSilver = true;
@@ -2140,7 +2150,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}*/
 		}
 		/* GOLD */
-		else if (player.height == gold::height) //Gold player
+		else if (player.ball_ctrl == gold::base_stat && player.height == gold::height) //Gold player
 		{
 			using namespace gold;
 			isGold = true;
@@ -2455,17 +2465,17 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			cardsSwappedForAPositions--;
 		}
 
-		if (countA > freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))))
+		if (countA > freeAPositions + max(0, (cardLimit + freeCOMs) - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))))
 		{
 			if (usingNMWMFAPos)
 			{
-				if (countA > freeAPositions + max(0, cardLimit - cardCount) + 1)
+				if (countA > freeAPositions + max(0, (cardLimit + freeCOMs) - cardCount) + 1)
 				{
 					errorTot++;
 					errorMsg << _T("Has ") << countA << _T(" A positions, only allowed ") << freeAPositions + max(0, cardLimit - cardCount) + 1 << _T(". Remove cards to add A position slots; ");
 				}
 			}
-			else if (countA > freeAPositions + max(0, cardLimit - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))))
+			else if (countA > freeAPositions + max(0, (cardLimit + freeCOMs) - cardCount - max(0, ((numCom - numTrickCom) - freeCOMs))) + 1)
 			{
 				if (max(0, ((numCom - numTrickCom) - freeCOMs)) == 0) //hasn't exchanged any skill cards for com styles
 				{
@@ -2819,15 +2829,20 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 	}
 
 	//Check ability stats
-	if (numReg != nm::count)
+	if (numReg != regular::count)
 	{
 		errorTot++;
-		errorMsg << _T("Number of Regular players is ") << numReg << _T(", should be ") << nm::count << _T("; ");
+		errorMsg << _T("Number of Regular players is ") << numReg << _T(", should be ") << regular::count << _T("; ");
 	}
 	if (numBuff != buffed::count)
 	{
 		errorTot++;
 		errorMsg << _T("Number of Buffed players is ") << numBuff << _T(", should be ") << buffed::count << _T("; ");
+	}
+	if (numBronze != bronze::count)
+	{
+		errorTot++;
+		errorMsg << _T("Number of Bronze players is ") << numBronze << _T(", should be ") << bronze::count << _T("; ");
 	}
 	if (numSilver != silver::count)
 	{

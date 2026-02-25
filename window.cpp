@@ -73,7 +73,7 @@ void setup_main(HWND H)
 		20, 601, 70, 26, H, (HMENU)IDB_MAKE_BUFF, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make NM"), 
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Reg"),
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
 		100, 601, 70, 26, H, (HMENU)IDB_MAKE_REGU, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
