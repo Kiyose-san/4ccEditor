@@ -181,7 +181,6 @@ namespace regular { //nm (nonbuffed) stats
 	const int weak_foot_accuracy = 4;
 	const int height = 180;
 	const int skills = 6; //max number of non free skills allowed
-	const int skills_gk = 5; //max number of non free skills allowed for GK
 	const int tricks = 12; //max number of trick cards allowed
 	const int coms = 1; //free coms allowed
 	const int a_pos = 2; //free a positions allowed, note this includes the A position that a registered position gives
@@ -224,7 +223,7 @@ namespace goalkeeper {
 	const int weak_foot_usage = 4;
 	const int weak_foot_accuracy = 4;
 	const int height = 185;
-	const int skills = 7; //max number of non free skills allowed
+	const int skills = 5; //max number of non free skills allowed
 	const int tricks = 12; //max number of trick cards allowed
 	const int coms = 1; //free coms allowed
 	const int a_pos = 1; //free a positions allowed, note this includes the A position that a registered position gives

@@ -1322,7 +1322,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 
 			cardMod += min(coms, numCom); //1 free COM styles
 			cardMod += min(tricks, numTrick); //12 free tricks (aka all of them)
-			cardLimit = skills + cardMod; //7 skill cards
+			cardLimit = skills + cardMod; //5 skill cards
 
 			if (player.injury + 1 > injury_resistance)
 			{
@@ -1382,14 +1382,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 
 			cardMod += min(coms, numCom); //1 free COM styles
 			cardMod += min(tricks, numTrick); //12 free tricks (aka all of them)
-
-			if (player.reg_pos == 0) //Buffed players can't be GK
-			{
-				cardLimit = skills_gk + cardMod;
-			}
-			else {
-				cardLimit = skills + cardMod;
-			}
+			cardLimit = skills + cardMod;
 			
 
 			if (player.injury + 1 > injury_resistance)
