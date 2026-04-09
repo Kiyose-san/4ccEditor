@@ -1211,7 +1211,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 					cardMod++;
 				}
 				//Trick cards may be free, count number
-				if (jj < 6 || jj == 16 || jj == 21 || jj == 28 || jj == 29 || jj == 30 || jj == 34)
+				if (jj < 7 || jj == 16 || jj == 21 || jj == 28 || jj == 29 || jj == 30 || jj == 34)
 				{
 					hasTrick = true;
 					numTrick++;
@@ -1382,7 +1382,15 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 
 			cardMod += min(coms, numCom); //1 free COM styles
 			cardMod += min(tricks, numTrick); //12 free tricks (aka all of them)
-			cardLimit = skills + cardMod; //7 skill cards
+
+			if (player.reg_pos == 0) //Buffed players can't be GK
+			{
+				cardLimit = skills_gk + cardMod;
+			}
+			else {
+				cardLimit = skills + cardMod;
+			}
+			
 
 			if (player.injury + 1 > injury_resistance)
 			{
@@ -1449,11 +1457,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				errorTot++;
 				errorMsg << _T("\tBuffed players cannot play as GK;\r\n");
 			}
+			/*
 			if (player.reg_pos == 1 || player.play_pos[9] == 2) //Buffed players can't be CB
 			{
 				errorTot++;
 				errorMsg << _T("\tBuffed players cannot play as CB;\r\n");
 			}
+			*/
 			cardMod += min(tricks, numTrick); //12 free tricks (aka all of them)
 			cardMod += min(coms, numCom); //1 free COM
 			cardLimit = skills + cardMod; //7 skill cards

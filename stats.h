@@ -10,7 +10,7 @@ namespace gold { //gold stats
 	const int weak_foot_usage = 4;
 	const int weak_foot_accuracy = 4;
 	const int height = 195;
-	const int skills = 8; //max number of non free skills allowed
+	const int skills = 9; //max number of non free skills allowed
 	const int tricks = 12; //max number of trick cards allowed
 	const int coms = 2; //free coms allowed
 	const int a_pos = 2; //free a positions allowed, note this includes the A position that a registered position gives
@@ -58,18 +58,18 @@ namespace silver { //silver stats
 	const int coms = 2; //free coms allowed
 	const int a_pos = 2; //free a positions allowed, note this includes the A position that a registered position gives
 
-	const int base_stat = 94; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
+	const int base_stat = 95; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
 	const int offensive_awareness = 99;
 	const int ball_control = 0;
 	const int dribbling = 0;
 	const int low_pass = 0;
 	const int lofted_pass = 0;
 	const int finishing = 99;
-	const int place_kicking = 89;
+	const int place_kicking = 90;
 	const int curl = 0;
 	const int header = 99;
 	const int defensive_awareness = 60;
-	const int ball_winning = 89;
+	const int ball_winning = 90;
 	const int kicking_power = 0;
 	const int speed = 0;
 	const int acceleration = 0;
@@ -100,18 +100,18 @@ namespace bronze { //bronze stats
 	const int coms = 2; //free coms allowed
 	const int a_pos = 2; //free a positions allowed, note this includes the A position that a registered position gives
 
-	const int base_stat = 89; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
-	const int offensive_awareness = 94;
+	const int base_stat = 91; //base stat value used if no changes. if a stat below is set at 0, this value will be used.
+	const int offensive_awareness = 96;
 	const int ball_control = 0;
 	const int dribbling = 0;
 	const int low_pass = 0;
 	const int lofted_pass = 0;
-	const int finishing = 94;
-	const int place_kicking = 84;
+	const int finishing = 96;
+	const int place_kicking = 86;
 	const int curl = 0;
-	const int header = 94;
+	const int header = 96;
 	const int defensive_awareness = 60;
-	const int ball_winning = 84;
+	const int ball_winning = 86;
 	const int kicking_power = 0;
 	const int speed = 0;
 	const int acceleration = 0;
@@ -154,7 +154,7 @@ namespace buffed { //buffed player stats
 	const int curl = 0;
 	const int header = 0;
 	const int defensive_awareness = 60;
-	const int ball_winning = 60;
+	const int ball_winning = 65;
 	const int kicking_power = 0;
 	const int speed = 0;
 	const int acceleration = 0;
@@ -180,7 +180,8 @@ namespace regular { //nm (nonbuffed) stats
 	const int weak_foot_usage = 4;
 	const int weak_foot_accuracy = 4;
 	const int height = 180;
-	const int skills = 7; //max number of non free skills allowed
+	const int skills = 6; //max number of non free skills allowed
+	const int skills_gk = 5; //max number of non free skills allowed for GK
 	const int tricks = 12; //max number of trick cards allowed
 	const int coms = 1; //free coms allowed
 	const int a_pos = 2; //free a positions allowed, note this includes the A position that a registered position gives
@@ -203,7 +204,7 @@ namespace regular { //nm (nonbuffed) stats
 	const int acceleration = 70;
 	const int balance = 0;
 	const int physical_contact = 0;
-	const int jump = 70;
+	const int jump = 80;
 	const int stamina = 65;
 	const int gk_awareness = 72;
 	const int catching = 72;
