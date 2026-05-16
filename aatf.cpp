@@ -1383,7 +1383,6 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			cardMod += min(coms, numCom); //1 free COM styles
 			cardMod += min(tricks, numTrick); //12 free tricks (aka all of them)
 			cardLimit = skills + cardMod;
-			
 
 			if (player.injury + 1 > injury_resistance)
 			{
