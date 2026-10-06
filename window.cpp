@@ -68,19 +68,14 @@ void setup_main(HWND H)
 		200, 569, 70, 26, H, (HMENU)IDB_MAKE_BRON_COLOR, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Buff"),
-		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP,
-		20, 601, 70, 26, H, (HMENU)IDB_MAKE_BUFF, GetModuleHandle(NULL), NULL);
-	setup_control(hw_new, ghFont, scale_cntl_proc);
-
-	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Reg"),
+	hw_new = CreateWindowEx(0, _T("Button"), _T("Make Regular"),
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		100, 601, 70, 26, H, (HMENU)IDB_MAKE_REGU, GetModuleHandle(NULL), NULL);
+		20, 601, 140, 26, H, (HMENU)IDB_MAKE_REGU, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(0, _T("Button"), _T("Stats:"), 
 		BS_PUSHBUTTON | WS_CHILD | WS_VISIBLE | WS_TABSTOP, 
-		180, 601, 40, 26, H, (HMENU)IDB_SET_STATS, GetModuleHandle(NULL), NULL);
+		170, 601, 50, 26, H, (HMENU)IDB_SET_STATS, GetModuleHandle(NULL), NULL);
 	setup_control(hw_new, ghFont, scale_cntl_proc);
 
 	hw_new = CreateWindowEx(WS_EX_CLIENTEDGE, _T("EDIT"), _T(""), 

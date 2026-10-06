@@ -4,7 +4,7 @@
 #include "resource.h"
 #include "stats.h"
 #include "aatf.h"
-#include <list>    
+#include <list>
 #ifndef UNICODE  
 typedef std::string tstring;
 typedef std::stringstream tstringstream;
@@ -1032,7 +1032,6 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 	int numGK = 0;
 	//Count of player ratings
 	int numReg = 0;
-	int numBuff = 0;
 	int numBronze = 0;
 	int numSilver = 0;
 	int numGold = 0;
@@ -1042,6 +1041,9 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 	int numTall = 0;
 	int numMid = 0;
 	int numManlet = 0;
+
+	int maxCardMod = 0;
+	int maxAPosMod = 0;
 	//bool usingRed = true;
 
 	//Run through all players once to determine height system
@@ -1119,8 +1121,9 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 		int targetTightPos = 0;
 		int targetAggres = 0;
 		// Height and A positions
-		int allowedHeight = 0;
+		//int allowedHeight = 0;
 		int allowedAPostions = 0;
+		int allowedAPostionsMod = 0;
 		// Rating Calculation
 		int rating = player.drib;
 		rating = max(player.gk, rating);
@@ -1276,8 +1279,45 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				errorMsg << _T("\tPlaying style out of range (0-21);\r\n");
 			}
 		}
+
+		if (player.height == globalStats::heightColossal) {
+			numGiga++;
+			cardMod += globalStats::colossal_card_mod;
+			allowedAPostionsMod += globalStats::colossal_apos_mod;
+			weakFootAcc = globalStats::colossal_foot_acc == 0 ? weakFootAcc : globalStats::colossal_foot_acc;
+			weakFootUse = globalStats::colossal_foot_usage == 0 ? weakFootUse : globalStats::colossal_foot_usage;
+		}
+		else if (player.height == globalStats::heightGiant) {
+			numGiant++;
+			cardMod += globalStats::giant_card_mod;
+			allowedAPostionsMod += globalStats::giant_apos_mod;
+			weakFootAcc = globalStats::giant_foot_acc == 0 ? weakFootAcc : globalStats::giant_foot_acc;
+			weakFootUse = globalStats::giant_foot_usage == 0 ? weakFootUse : globalStats::giant_foot_usage;
+		}
+		else if (player.height == globalStats::heightTall || player.reg_pos == 0 && player.height == globalStats::gk_height_override) {
+			numTall++;
+			cardMod += globalStats::tall_card_mod;
+			allowedAPostionsMod += globalStats::tall_apos_mod;
+			weakFootAcc = globalStats::tall_foot_acc == 0 ? weakFootAcc : globalStats::tall_foot_acc;
+			weakFootUse = globalStats::tall_foot_usage == 0 ? weakFootUse : globalStats::tall_foot_usage;
+		}
+		else if (player.height == globalStats::heightMid) {
+			numMid++;
+			cardMod += globalStats::mid_card_mod;
+			allowedAPostionsMod += globalStats::mid_apos_mod;
+			weakFootAcc = globalStats::mid_foot_acc == 0 ? weakFootAcc : globalStats::mid_foot_acc;
+			weakFootUse = globalStats::mid_foot_usage == 0 ? weakFootUse : globalStats::mid_foot_usage;
+		}
+		else if (player.height == globalStats::heightManlet) {
+			numManlet++;
+			cardMod += globalStats::manlet_card_mod;
+			allowedAPostionsMod += globalStats::manlet_apos_mod;
+			weakFootAcc = globalStats::manlet_foot_acc == 0 ? weakFootAcc : globalStats::manlet_foot_acc;
+			weakFootUse = globalStats::manlet_foot_usage == 0 ? weakFootUse : globalStats::manlet_foot_usage;
+		}
+
 		/* GOALKEEPER */
-		if (player.reg_pos == 0 && player.height == goalkeeper::height) //Goalkeeper player, counts towards regular
+		if (player.reg_pos == 0) //Goalkeeper player, counts towards regular
 		{
 			numReg++;
 			using namespace goalkeeper;
@@ -1308,11 +1348,11 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			targetTightPos = tight_possession;
 			targetAggres = aggression;
 
-			allowedHeight = height;
+			//allowedHeight = globalStats::gk_height_override == 0 ? globalStats::heightTall : globalStats::gk_height_override;
 			allowedAPostions = a_pos;
 
-			weakFootUse = weak_foot_usage;
-			weakFootAcc = weak_foot_accuracy;
+			if (weakFootAcc == 0) weakFootAcc = weak_foot_accuracy;
+			if (weakFootUse == 0) weakFootUse = weak_foot_usage;
 
 			if (player.form + 1 != form)
 			{
@@ -1337,7 +1377,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}
 		}
 		/* REGULAR */
-		else if (rating == regular::base_stat && player.height == regular::height) //Regular player
+		else if (rating < bronze::base_stat) //Regular player
 		{
 			numReg++;
 			using namespace regular;
@@ -1368,11 +1408,11 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			targetTightPos = tight_possession;
 			targetAggres = aggression;
 
-			allowedHeight = height;
+			//allowedHeight = height;
 			allowedAPostions = a_pos;
 
-			weakFootUse = weak_foot_usage;
-			weakFootAcc = weak_foot_accuracy;
+			if (weakFootAcc == 0) weakFootAcc = weak_foot_accuracy;
+			if (weakFootUse == 0) weakFootUse = weak_foot_usage;
 
 			if (player.form + 1 != form)
 			{
@@ -1396,84 +1436,8 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 				if (player.injury + 1 < injury_resistance) errorMsg << _T("\tWARN: Has inj resist") << player.injury + 1 << _T(", allowed ") << injury_resistance << _T(";\r\n");
 			}
 		}
-		/* Buffed */
-		else if (rating == buffed::base_stat && player.height == buffed::height) //Buffed player
-		{
-			numBuff++;
-			using namespace buffed;
-			targetRate = base_stat;
-			targetDrib = dribbling;
-			targetGk = gk_awareness;
-			targetFinish = finishing;
-			targetLowPass = low_pass;
-			targetLoftPass = lofted_pass;
-			targetHeader = header;
-			targetSwerve = curl;
-			targetCatching = catching;
-			targetClearing = clearing;
-			targetReflex = reflexes;
-			targetBodyCtrl = balance;
-			targetPhysCont = physical_contact;
-			targetKickPwr = kicking_power;
-			targetExpPwr = acceleration;
-			targetBallCtrl = ball_control;
-			targetBallWin = ball_winning;
-			targetJump = jump;
-			targetCover = gk_reach;
-			targetPlcKick = place_kicking;
-			targetStamina = stamina;
-			targetSpeed = speed;
-			targetAtkProw = offensive_awareness;
-			targetDefProw = defensive_awareness;
-			targetTightPos = tight_possession;
-			targetAggres = aggression;
-
-			allowedHeight = height;
-			allowedAPostions = a_pos;
-
-			weakFootUse = weak_foot_usage;
-			weakFootAcc = weak_foot_accuracy;
-
-			if (numBuff > count)
-			{
-				errorTot++;
-				errorMsg << _T("\tToo many Buffed players;\r\n");
-			}
-			if (player.form + 1 != form)
-			{
-				errorTot++;
-				errorMsg << _T("\tForm is ") << player.form + 1 << _T(", should be ") << form << _T(";\r\n");
-			}
-			if (player.reg_pos == 0) //Buffed players can't be GK
-			{
-				errorTot++;
-				errorMsg << _T("\tBuffed players cannot play as GK;\r\n");
-			}
-			/*
-			if (player.reg_pos == 1 || player.play_pos[9] == 2) //Buffed players can't be CB
-			{
-				errorTot++;
-				errorMsg << _T("\tBuffed players cannot play as CB;\r\n");
-			}
-			*/
-			cardMod += min(tricks, numTrick); //12 free tricks (aka all of them)
-			cardMod += min(coms, numCom); //1 free COM
-			cardLimit = skills + cardMod; //7 skill cards
-
-			if (player.injury + 1 > injury_resistance)
-			{
-				errorTot++;
-				errorMsg << _T("\tInjury resist is ") << player.injury + 1 << _T(", should be ") << injury_resistance << _T(";\r\n");
-			}
-			if (useSuggestions)
-			{
-				//if (numTrick < tricks) errorMsg << _T("WARN: Has ") << numTrick << _T(" trick cards, allowed ") << tricks << _T(";\r\n");
-				if (numCom < coms) errorMsg << _T("\tWARN: Has ") << numCom << _T(" COM cards, allowed ") << coms << _T(";\r\n");
-				if (player.injury + 1 < injury_resistance) errorMsg << _T("WARN: Has inj resist") << player.injury + 1 << _T(", allowed ") << injury_resistance << _T(";\r\n");
-			}
-		}
 		/* Bronze */
-		else if (rating == bronze::base_stat && player.height == bronze::height) //Bronze player
+		else if (rating == bronze::base_stat) //Bronze player
 		{
 			numBronze++;
 			using namespace bronze;
@@ -1504,13 +1468,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			targetTightPos = tight_possession;
 			targetAggres = aggression;
 
-			allowedHeight = height;
+			//allowedHeight = height;
 			allowedAPostions = a_pos;
 
-			weakFootUse = weak_foot_usage;
-			weakFootAcc = weak_foot_accuracy;
+			if (weakFootAcc == 0) weakFootAcc = weak_foot_accuracy;
+			if (weakFootUse == 0) weakFootUse = weak_foot_usage;
 
-			if (numBronze > count)
+			if (numBronze > globalStats::allowedBronze)
 			{
 				errorTot++;
 				errorMsg << _T("T\too many Bronze medals;\r\n");
@@ -1543,7 +1507,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}
 		}
 		/* SILVER */
-		else if (rating == silver::base_stat && player.height == silver::height) //Silver player
+		else if (rating == silver::base_stat) //Silver player
 		{
 			numSilver++;
 			using namespace silver;
@@ -1574,13 +1538,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			targetTightPos = tight_possession;
 			targetAggres = aggression;
 
-			allowedHeight = height;
+			//allowedHeight = height;
 			allowedAPostions = a_pos;
 
-			weakFootUse = weak_foot_usage;
-			weakFootAcc = weak_foot_accuracy;
+			if (weakFootAcc == 0) weakFootAcc = weak_foot_accuracy;
+			if (weakFootUse == 0) weakFootUse = weak_foot_usage;
 
-			if (numSilver > count)
+			if (numSilver > globalStats::allowedSilver)
 			{
 				errorTot++;
 				errorMsg << _T("\tToo many Silver medals;\r\n");
@@ -1613,7 +1577,7 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			}
 		}
 		/* GOLD */
-		else if (rating == gold::base_stat && player.height == gold::height) //Gold player
+		else if (rating == gold::base_stat) //Gold player
 		{
 			numGold++;
 			using namespace gold;
@@ -1644,13 +1608,13 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			targetTightPos = tight_possession;
 			targetAggres = aggression;
 
-			allowedHeight = height;
+			//allowedHeight = height;
 			allowedAPostions = a_pos;
 
-			weakFootUse = weak_foot_usage;
-			weakFootAcc = weak_foot_accuracy;
+			if (weakFootAcc == 0) weakFootAcc = weak_foot_accuracy;
+			if (weakFootUse == 0) weakFootUse = weak_foot_usage;
 
-			if (numGold > count)
+			if (numGold > globalStats::allowedGold)
 			{
 				errorTot++;
 				errorMsg << _T("\tToo many Gold medals;\r\n");
@@ -1717,14 +1681,14 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			errorTot++;
 			errorMsg << _T("Illegal height (") << player.height << _T(" cm); ");
 		}*/
-		if (player.height != allowedHeight)
+		/*if (player.height != allowedHeight)
 		{
 			errorTot++;
 			errorMsg << _T("\tWrong height, allowed height is: ") << allowedHeight << _T(";\r\n");
-		}
+		}*/
 
 		//If more than allowed A positions, 1 card less for each
-		if (countA > allowedAPostions) cardLimit -= (countA - allowedAPostions);
+		if (countA > allowedAPostions + allowedAPostionsMod) cardLimit -= (countA - (allowedAPostions + allowedAPostionsMod));
 
 		//Check weak foot ratings
 		if (player.weak_use + 1 > weakFootUse)
@@ -1750,7 +1714,20 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 			if (cardCount < cardLimit) errorMsg << _T("\tWARN: Has ") << cardCount - numTrick << _T(" cards, allowed ") << cardLimit - numTrick << _T(";\r\n");
 			if (player.weak_use + 1 < weakFootUse) errorMsg << _T("\tWARN: Has weak usage ") << player.weak_use + 1 << _T(", allowed ") << weakFootUse << _T(";\r\n");
 			if (player.weak_acc + 1 < weakFootAcc) errorMsg << _T("\tWARN: Has weak accuracy ") << player.weak_acc + 1 << _T(", allowed ") << weakFootAcc << _T(";\r\n");
-			if (countA < allowedAPostions) errorMsg << _T("\tWARN; Has ") << countA << _T(" A positions, allowed ") << allowedAPostions << _T(";\r\n");
+			if (countA < allowedAPostions + allowedAPostionsMod) errorMsg << _T("\tWARN; Has ") << countA << _T(" A positions, allowed ") << (allowedAPostions + allowedAPostionsMod) << _T(";\r\n");
+		}
+
+		//Run over every on-field player, if they aren't registered to one of their positions add an error
+		bool isInPosition = false;
+		for (int index = 0; index < 23; index++) {
+			if (aatf_check_player_in_pos(gteams[teamSel], player, player.reg_pos, 0)) {//Make sure they are in their registered position at some point
+				isInPosition = true;
+				break;
+			}
+		}
+		if (!isInPosition) {
+			errorTot++;
+			errorMsg << _T("\tPlayer is a registered ") << aatf_get_position_name_from_byte(player.reg_pos) << _T(" but is not in that position in any Game Plan\r\n");
 		}
 
 		//Check player overall rating
@@ -1952,30 +1929,55 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 	}
 
 	//Check ability stats
-	if (numReg != regular::count)
+	/*if (numReg != regular::count)
 	{
 		errorTot++;
 		errorMsg << _T("\tNumber of Regular players is ") << numReg << _T(", should be ") << regular::count << _T(";\r\n");
-	}
-	if (numBuff != buffed::count)
+	}*/
+	/*if (numBuff != buffed::count)
 	{
 		errorTot++;
 		errorMsg << _T("\tNumber of Buffed players is ") << numBuff << _T(", should be ") << buffed::count << _T(";\r\n");
-	}
-	if (numBronze != bronze::count)
+	}*/
+	if (numBronze != globalStats::allowedBronze)
 	{
 		errorTot++;
-		errorMsg << _T("\tNumber of Bronze medals is ") << numBronze << _T(", should be ") << bronze::count << _T(";\r\n");
+		errorMsg << _T("\tNumber of Bronze medals is ") << numBronze << _T(", should be ") << globalStats::allowedBronze << _T(";\r\n");
 	}
-	if (numSilver != silver::count)
+	if (numSilver != globalStats::allowedSilver)
 	{
 		errorTot++;
-		errorMsg << _T("\tNumber of Silver medals is ") << numSilver << _T(", should be ") << silver::count << _T(";\r\n");
+		errorMsg << _T("\tNumber of Silver medals is ") << numSilver << _T(", should be ") << globalStats::allowedSilver << _T(";\r\n");
 	}
-	if (numGold != gold::count)
+	if (numGold != globalStats::allowedGold)
 	{
 		errorTot++;
-		errorMsg << _T("\tNumber of Gold medals is ") << numGold << _T(", should be ") << gold::count << _T(";\r\n");
+		errorMsg << _T("\tNumber of Gold medals is ") << numGold << _T(", should be ") << globalStats::allowedGold << _T(";\r\n");
+	}
+	if (numGiga != globalStats::allowedColossal)
+	{
+		errorTot++;
+		errorMsg << _T("\tNumber of ") << globalStats::heightColossal << _T(" players is ") << numTall << _T(". Should be ") << globalStats::allowedColossal << _T(";\r\n");
+	}
+	if (numGiant != globalStats::allowedGiant)
+	{
+		errorTot++;
+		errorMsg << _T("\tNumber of ") << globalStats::heightGiant << _T(" players is ") << numTall << _T(". Should be ") << globalStats::allowedGiant << _T(";\r\n");
+	}
+	if (numTall != globalStats::allowedTall)
+	{
+		errorTot++;
+		errorMsg << _T("\tNumber of ") << globalStats::heightTall << _T(" players is ") << numTall << _T(". Should be ") << globalStats::allowedTall << _T(";\r\n");
+	}
+	if (numMid != globalStats::allowedMid)
+	{
+		errorTot++;
+		errorMsg << _T("\tNumber of ") << globalStats::heightMid << _T(" players is ") << numTall << _T(". Should be ") << globalStats::allowedMid << _T(";\r\n");
+	}
+	if (numManlet != globalStats::allowedManlet)
+	{
+		errorTot++;
+		errorMsg << _T("\tNumber of ") << globalStats::heightManlet << _T(" players is ") << numTall << _T(". Should be ") << globalStats::allowedManlet << _T(";\r\n");
 	}
 	if (errorMsg.rdbuf()->in_avail()) errorMsg << _T("\r\n");
 	errorMsg << _T("\r\nErrors: ") << errorTot << _T("\r\n");
@@ -1986,4 +1988,93 @@ void aatf_single_vgl(HWND hAatfbox, int pesVersion, int teamSel, player_entry* g
 		SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM)_T("It's all fucked."));
 	else
 		SendDlgItemMessage(hAatfbox, IDB_AATFOK, WM_SETTEXT, 0, (LPARAM)_T("Perfect, blaze."));
+}
+
+
+//Exclusive: Check if player is ONLY in that position across all presets and formations
+bool aatf_check_player_in_pos(team_entry& team, player_entry& player, int position, bool exclusive)
+{
+	bool isInPos = true;
+	bool isInStarting11 = false;
+	int playerIndex = 0;
+
+	for (int ii = 0; ii < 11; ii++)
+	{
+		if (player.id == (team.id * 100) + 1 + team.starting11[ii])
+		{
+			isInStarting11 = true;
+			playerIndex = ii;
+			break;
+		}
+	}
+
+	if (isInStarting11)
+	{
+		for (int indexP = 0; indexP < 3; indexP++)
+		{
+			int formationCount = team.presets[indexP].fluid ? 3 : 1;
+			for (int indexF = 0; indexF < formationCount; indexF++)
+			{
+				int playerPos = team.presets[indexP].formations[indexF].players[playerIndex].pos;
+
+				//If not exclusive, return true if any player has that position in any preset or formation
+				if (!exclusive && playerPos == position)
+					return true;
+
+				isInPos = isInPos && team.presets[indexP].formations[indexF].players[playerIndex].pos == position;
+			}
+		}
+	}
+	else
+	{
+		return player.reg_pos == position;
+	}
+
+	return isInPos;
+}
+
+wchar_t* aatf_get_position_name_from_byte(byte pos)
+{
+	switch (pos)
+	{
+	case 0x01:
+		return L"CB";
+		break;
+	case 0x02:
+		return L"LB";
+		break;
+	case 0x03:
+		return L"RB";
+		break;
+	case 0x04:
+		return L"DMF";
+		break;
+	case 0x05:
+		return L"CMF";
+		break;
+	case 0x06:
+		return L"LMF";
+		break;
+	case 0x07:
+		return L"RMF";
+		break;
+	case 0x08:
+		return L"AMF";
+		break;
+	case 0x09:
+		return L"LWF";
+		break;
+	case 0x0A:
+		return L"RWF";
+		break;
+	case 0x0B:
+		return L"SS";
+		break;
+	case 0x0C:
+		return L"CF";
+		break;
+	default:
+		return L"GK";
+		break;
+	}
 }
